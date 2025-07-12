@@ -1,4 +1,3 @@
-
 import fitz
 path="./testPDF/KARSA 직업흥미검사 결과지.pdf"
 doc = fitz.open(path)
