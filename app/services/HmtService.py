@@ -1,21 +1,31 @@
 from fastapi import UploadFile
+
+from app.repository.userRepository import UserRepository
 from app.util.PdfExtracter.HmtExtracter import HmtExtracter
 from app.util.Transactional import Transactional
 from app.repository.hmtRepository import hmtRepository, HmtRepository
+from app.repository.userRepository import userRepository,UserRepository
 from app.domain.Hmt import Hmt
+import uuid
 from app.domain.User import User
 from datetime import datetime
 from app.DTO.HmtDTO import HmtResponse
 
 class HmtService:
-    def __init__(self,hmtRepository: HmtRepository):
+    def __init__(self,hmtRepository: HmtRepository,userRepository: UserRepository):
         self._hmtRepository= hmtRepository
+        self._userRepository = userRepository
+        self._s3=None
 
     #흥미검사 첨부 기능
     @Transactional
-    def createHmt(self,user:User,file:UploadFile):
+    def createHmt(self, user_id:str ,file:UploadFile):
+        user:User=self._userRepository.getById(user_id)
         scores=HmtExtracter(file)
-        pdf_url="test"
+        pdf_bytes = file.file.read()
+        key=f"hmt/{user.uid}/{uuid.uuid4().hex}.pdf"
+        pdf_url = self._s3.upload_bytes(pdf_bytes, key)
+
         newHmt=Hmt(
             user=user,
             hmtGradeNum=user.gradeNum,
@@ -28,7 +38,10 @@ class HmtService:
             cScore=scores.get("C",-1)
         )
         self._hmtRepository.save(newHmt)
-        return HmtResponse.model_validate(newHmt)
+
+
+        return newHmt
+
     @Transactional
     def deleteHmt(self,hmtId:int):
         removeObj=self._hmtRepository.getById(hmtId)
@@ -37,8 +50,21 @@ class HmtService:
         self._hmtRepository.remove(removeObj)
     @Transactional
     def getHmtById(self,hmtId:int):
-        if hmtId is None:
+        getObj=self._hmtRepository.getById(hmtId)
+        if getObj is None:
             raise Exception(f"Hmt with id {hmtId} not found")
-        return HmtResponse.model_validate(self._hmtRepository.getById(hmtId))
+        return getObj
 
+    @Transactional
+    def allHmtByUserId(self,user_id:str):
+        user:User=self._userRepository.getById(user_id)
+        if user is None:
+            raise Exception(f"Hmt with id {user_id} not found")
+        allHmt=user.hmts
+        if allHmt is None:
+            raise Exception(f"Hmt with id {user_id} not found")
+        return [ HmtResponse.model_validate(c, from_attributes=True)
+        for c in allHmt ]
+
+hmtService = HmtService(hmtRepository,userRepository)
 

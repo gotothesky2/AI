@@ -1,3 +1,4 @@
 from .db_context import get_db
 
-db = get_db
+def get_global_db():
+    return get_db()

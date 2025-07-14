@@ -8,11 +8,10 @@ def default_term() -> int:
     return 1 if month < 7 else 2
 class Cst(BaseEntity):
     id=Column(BigInteger,primary_key=True,autoincrement=True,nullable=False)
-    uid=Column(ForeignKey("user.uid"),nullable=False)
-    pdfLink=Column(String,nullable=False)
+    uid=Column(String(255),ForeignKey("user.uid"),nullable=False)
+    pdfLink=Column(String(255),nullable=False)
     cstGradeNum=Column(Integer,nullable=False)
     cstTermNum=Column(Integer,nullable=False,default=default_term)
-    cstScore=Column(Float,nullable=False)
     uploadTime=Column(DateTime,default=datetime.now,nullable=False)
     mathScore=Column(Float,nullable=False)
     spaceScore=Column(Float,nullable=False)
@@ -26,5 +25,5 @@ class Cst(BaseEntity):
     relationScore=Column(Float,nullable=False)
     physicalScore=Column(Float,nullable=False)
 
-    relationship('User',back_populates="csts")
+    user=relationship('User',back_populates="csts")
 

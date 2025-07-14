@@ -1,7 +1,6 @@
 import fitz
 from fastapi import UploadFile
-
-from PdfExtractor.AptitudeExtracterTest import teg_name
+from pathlib import Path
 
 
 class CstExtracter:
@@ -25,6 +24,10 @@ class CstExtracter:
             return data
         if isinstance(data, str):
             with open(data, 'rb') as f:
+                return f.read()
+        if isinstance(data, (str, Path)):
+            path_str = str(data)
+            with open(path_str, 'rb') as f:
                 return f.read()
         raise ValueError("지원하지 않는 PDF 소스 타입")
     #페이지수 및 검사pdf맞는지 검사
@@ -61,7 +64,7 @@ class CstExtracter:
                     i += 1
                     if len(result) == len(cls.teg_name):
                         break
-            if len(result)!=len(teg_name):
+            if len(result)!=len(cls.teg_name):
                 raise ValueError("점수를 추출 할 수 없습니다.")
         return result
 

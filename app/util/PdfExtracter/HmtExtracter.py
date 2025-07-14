@@ -1,5 +1,6 @@
 import fitz
 from fastapi import UploadFile
+from pathlib import Path
 
 class HmtExtracter:
     REQUIRED_KEYWORD="직업흥미검사(H) 주요 결과"
@@ -20,6 +21,10 @@ class HmtExtracter:
             return data
         if isinstance(data, str):
             with open(data, 'rb') as f:
+                return f.read()
+        if isinstance(data, (str, Path)):
+            path_str = str(data)
+            with open(path_str, 'rb') as f:
                 return f.read()
         raise ValueError("지원하지 않는 PDF 소스 타입")
     #페이지수 및 검사pdf맞는지 검사
@@ -52,7 +57,7 @@ class HmtExtracter:
                     if start_extract:
                         try:
                             val = float(line)
-                            result[teg[i]] = val
+                            result[cls.teg[i]] = val
                             i += 1
                             if len(result) == len(cls.teg):
                                 break
