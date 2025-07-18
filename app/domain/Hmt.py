@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, BigInteger
 from sqlalchemy.orm import relationship
-from .entity.BaseEntity import Base
+from .entity.BaseEntity import BaseEntity
 from datetime import datetime
 
 
@@ -9,7 +9,7 @@ def default_term() -> int:
     month = datetime.now().month
     return 1 if month < 7 else 2
 
-class Hmt(Base):
+class Hmt(BaseEntity):
     __tablename__ = 'hmt'
     __table_args__ = {'extend_existing': True}
     
@@ -26,8 +26,6 @@ class Hmt(Base):
     sScore = Column(Float, name='s_score', nullable=False)
     eScore = Column(Float, name='e_score', nullable=False)
     cScore = Column(Float, name='c_score', nullable=False)
-    createdAt = Column(DateTime, name='created_at', nullable=True)
-    updatedAt = Column(DateTime, name='updated_at', nullable=True)
 
     user = relationship("User", back_populates="hmts")
 

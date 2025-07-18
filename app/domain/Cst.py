@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from .entity.BaseEntity import Base
+from .entity.BaseEntity import BaseEntity
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, BigInteger
 from datetime import datetime
 
@@ -8,7 +8,7 @@ def default_term() -> int:
     month = datetime.now().month
     return 1 if month < 7 else 2
 
-class Cst(Base):
+class Cst(BaseEntity):
     __tablename__ = 'cst'
     __table_args__ = {'extend_existing': True}
     
@@ -30,8 +30,6 @@ class Cst(Base):
     handScore = Column(Float, name='hand_score', nullable=False)
     relationScore = Column(Float, name='relation_score', nullable=False)
     physicalScore = Column(Float, name='physical_score', nullable=False)
-    createdAt = Column(DateTime, name='created_at', nullable=True)
-    updatedAt = Column(DateTime, name='updated_at', nullable=True)
 
     user = relationship('User', back_populates="csts")
 
