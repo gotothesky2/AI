@@ -21,7 +21,14 @@ class HmtService:
     @Transactional
     def createHmt(self, user_id:str ,file:UploadFile):
         user:User=self._userRepository.getById(user_id)
+        if user is None:
+            raise Exception(f"User {user_id} not found")
+        
+        # PDF 추출 먼저 수행
         scores=HmtExtracter(file)
+        
+        # 파일 포인터를 처음으로 되돌린 후 S3 업로드용 바이트 읽기
+        file.file.seek(0)
         pdf_bytes = file.file.read()
         key=f"hmt/{user.uid}/{uuid.uuid4().hex}.pdf"
         pdf_url = self._s3.upload_bytes(pdf_bytes, key)
@@ -39,8 +46,8 @@ class HmtService:
         )
         self._hmtRepository.save(newHmt)
 
-
-        return newHmt
+        # JPA처럼 심플하게 - @Transactional이 자동으로 flush & DTO 변환 안전
+        return HmtResponse.model_validate(newHmt, from_attributes=True)
 
     @Transactional
     def deleteHmt(self,hmtId:int):
