@@ -2,19 +2,20 @@ from app.gptApi.gptEngine import GptBase
 from app.domain.Hmt import Hmt
 from app.domain.Cst import Cst
 
+
 class testReport(GptBase):
-    def __new__(cls,hmt:Hmt,cst:Cst):
-        return cls.get_response(hmt,cst)
-    
+    def __new__(cls):
+        return cls.get_response()
+
     @staticmethod
-    def system_prompt()->str:
-        prompt="""
+    def system_prompt() -> str:
+        prompt = """
             학생 진학 추천 레포트 작성에는 직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천, 교과와 모의고사 성적 분석, 사용자가 등록한 관심 계열 학과 대학교를 직업적성검사 흥미검사 데이터 및 성적 추이 데이터 기반 분석, 종합 분석 이 4가지 파트가 있어.
             그중 너는 직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천 부분을 담당하는 ai이야.
             너가 담당한 부분을 1000자 내외로 작성해줘.
             너가 작성한 부분은 학생이 직접 보는 레포트 파트이기 때문에 전문성을 가지고 학생이 이해할 수 있도록 작성해줘.
             아래 표를 바탕으로 각 점수들을 분석해야함.
-
+            디자인요소를 주어야해. 
             【직업흥미검사 - 6유형 공식 설명/대표직업/대표 대학계열·학과】
 
             R유형(실재형): 신체활동, 기계조작, 자연친화, 손재능이 뛰어나며 실제적인 일에 관심이 많음.  
@@ -145,34 +146,35 @@ class testReport(GptBase):
         return prompt
 
     @staticmethod
-    def user_prompt(hmt:Hmt,cst:Cst)->str:
-        prompt=f"""
+    def user_prompt() -> str:
+        prompt = f"""
         직업 흥미검사 결과[
-            R유형[실재형] 점수:{hmt.rScore},
-            I유형[탐구형] 점수:{hmt.iScore},
-            A유형[예술형] 점수:{hmt.aScore},
-            S유형[사회형] 점수:{hmt.sScore},
-            E유형[기업형] 점수:{hmt.eScore},
-            C유형[관습형] 점수:{hmt.cScore},
+            R유형[실재형] 점수:48.9,
+            I유형[탐구형] 점수:62.1,
+            A유형[예술형] 점수:48.8,
+            S유형[사회형] 점수:19.1,
+            E유형[기업형] 점수:54.9,
+            C유형[관습형] 점수:25.1,
         ]
-       
-        
+
+
         직업 적성검사 결과[
-            신체·운동능력 점수:{cst.physicalScore},
-            손재능 점수:{cst.handScore},
-            공간지각력 점수:{cst.spaceScore},
-            음악능력 점수:{cst.musicScore},
-            창의력 점수:{cst.creativeScore},
-            언어능력 점수:{cst.langScore},
-            수리·논리력 점수:{cst.mathScore},
-            자기성찰능력 점수:{cst.selfScore},
-            대인관계능력 점수:{cst.relationScore},
-            자연친화력 점수:{cst.natureScore},
-            예술시각능력 점수:{cst.artScore}
-            
+            신체·운동능력 점수:20,
+            손재능 점수:42.4,
+            공간지각력 점수:25.7,
+            음악능력 점수:61.6,
+            창의력 점수:67,
+            언어능력 점수:61.6,
+            수리·논리력 점수:59.3,
+            자기성찰능력 점수:50.7,
+            대인관계능력 점수:55.7,
+            자연친화력 점수:73.2,
+            예술시각능력 점수:93
+
         ]
 
         """
         return prompt
 
-    
+
+print(testReport())
