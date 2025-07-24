@@ -18,15 +18,22 @@ class CstService:
     @Transactional
     def createCst(self,user_id:str,file:UploadFile):
         user=self._userRepository.getById(user_id)
+        if user is None:
+            raise Exception(f"User {user_id} not found")
+        
+        # PDF 추출 먼저 수행
         scores=CstExtracter(file)
-        pdf_bytes = file.read()
-        key=key=f"hmt/{user.uid}/{uuid.uuid4().hex}.pdf"
+        
+        # 파일 포인터를 처음으로 되돌린 후 S3 업로드용 바이트 읽기
+        file.file.seek(0)
+        pdf_bytes = file.file.read()
+        key = f"cst/{user.uid}/{uuid.uuid4().hex}.pdf"
         pdf_url = self._s3.upload_bytes(pdf_bytes, key)
 
         newCst=Cst(
             user=user,
-            cstGradeNum=user.gradeNum,
             pdfLink=pdf_url,
+            cstGradeNum=user.gradeNum,
             mathScore=scores.get("수리·논리력",-1),
             spaceScore=scores.get("공간지각력",-1),
             creativeScore=scores.get("창의력",-1),
@@ -40,7 +47,9 @@ class CstService:
             physicalScore=scores.get("신체·운동능력",-1)
         )
         self._cstRepository.save(newCst)
-        return newCst
+        
+        # JPA처럼 심플하게 - @Transactional이 알아서 flush 처리
+        return CstResponse.model_validate(newCst, from_attributes=True)
 
     @Transactional
     def deleteCst(self,cstId:int):

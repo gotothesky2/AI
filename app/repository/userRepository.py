@@ -1,5 +1,6 @@
 from app.domain.User import User
 from app.repository.Repository import BaseRepository
+from typing import Optional
 
 class UserRepository(BaseRepository):
     def __init__(self):

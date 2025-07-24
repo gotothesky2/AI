@@ -1,0 +1,14 @@
+{
+    "configurations": [
+      {
+        "name": "Python: Run",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      }
+    ]
+  }
