@@ -5,12 +5,11 @@ from functools import wraps
 
 def Transactional(fn):
     @wraps(fn)
-    def wrapper(self,*args, **kwargs):
+    def wrapper(self, *args, **kwargs):
         session = SessionLocal()
         token = set_db(session)
         try:
-            result = fn(self,*args, **kwargs)
-            session.flush()
+            result = fn(self, *args, **kwargs)
             session.commit()
             return result
         except Exception:

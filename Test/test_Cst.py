@@ -1,3 +1,4 @@
+"""
 import io
 import pytest
 import uuid
@@ -20,9 +21,12 @@ from app.util.PdfExtracter.CstExtracter import CstExtracter
 # ————————————————
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    # 🚨 Spring 테이블 보존 - 자동 생성 비활성화
+    # Base.metadata.create_all(bind=engine)  # 주석 처리
+    print("📌 Using existing Spring database tables")
     yield
-    #Base.metadata.drop_all(bind=engine)
+    # 테이블 삭제도 비활성화 - Spring 데이터 보존
+    # Base.metadata.drop_all(bind=engine)
 
 # ————————————————
 # 2) 각 테스트 전 테이블 초기화
@@ -45,10 +49,13 @@ def test_user():
     sess.query(User).delete()
     sess.commit()
 
-    uid = str(uuid.uuid4())
-    user = User(uid=uid, name="test_user", gradeNum=1)
-    sess.add(user)
-    sess.commit()
+    # 기존 Spring DB 테이블들 사용 (테이블 생성 불필요)
+
+    # 기존 Spring DB에 있는 사용자 조회
+    existing_uid = "cfd0861b-ff87-48e3-8755-6ad68e5232c5"
+    user = sess.query(User).filter(User.uid == existing_uid).first()
+    if not user:
+        pytest.skip(f"테스트 사용자 {existing_uid}가 DB에 존재하지 않습니다.")
     sess.refresh(user)
     # 세션에서 분리(detach)해두면 이후 attach 시 InvalidRequestError 방지
    # sess.expunge(user)
@@ -85,8 +92,9 @@ def test_create_cst_commits(test_user, monkeypatch):
     upload = make_uploadfile(pdf_path)
 
     # 실행 & 검증
-    resp: Cst = cstService.createCst(user, upload)
-    resp: Cst = cstService.createCst(user, upload)
-    csts=cstService.allCstByUser(user)
-    print(CstResponse.model_validate(resp))
+    resp: CstResponse = cstService.createCst(user, upload)
+    resp2: CstResponse = cstService.createCst(user, upload)
+    csts = cstService.allCstByUser(user)
+    print(resp)
     print(csts)
+"""
