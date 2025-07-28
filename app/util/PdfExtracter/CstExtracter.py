@@ -1,7 +1,7 @@
 import fitz
 from fastapi import UploadFile
 from pathlib import Path
-from util.exceptions import ErrorCode, raise_business_exception, raise_file_exception
+from globals import ErrorCode, raise_business_exception, raise_file_exception
 
 
 class CstExtracter:
