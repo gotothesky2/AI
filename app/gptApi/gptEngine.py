@@ -31,16 +31,30 @@ class GptBase(ABC):
         """
         pass
 
+    @staticmethod
+    @abstractmethod
+    def output_constructor()->str:
+        """
+
+        {
+
+        }
+        """
+        pass
+
+
+
     @classmethod
     def get_response(cls, *args, **kwargs):
         return cls.client.chat.completions.create(
             model=cls.model,
+            response_format={"type","json_object"},
             messages=[
-                {"role": "system", "content": cls.system_prompt()},
+                {"role": "system", "content": cls.system_prompt()+cls.output_constructor()},
                 {"role": "user", "content": cls.user_prompt(*args, **kwargs)},
             ],
             max_tokens=3000,
-            temperature=0.8,
+            temperature=0.6,
         )
 
 
