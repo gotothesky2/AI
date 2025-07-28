@@ -2,8 +2,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from app.domain.Hmt import Hmt
 class HmtResponse(BaseModel):
-    id: int
-    uid: str
     rScore: float
     iScore: float
     aScore: float
