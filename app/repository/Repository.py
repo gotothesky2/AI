@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic, Type, List, Optional, Union
 from sqlalchemy.orm import Session
-from app.util.globalDB.global_db import get_global_db # db_context를 통해 가져오는 세션
+from util.globalDB.global_db import get_global_db # db_context를 통해 가져오는 세션
 
 T = TypeVar("T")
 

@@ -2,7 +2,7 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError
-from app.util.exceptions import (
+from util.exceptions import (
     CustomException, 
     create_http_exception, 
     ErrorCode,
@@ -105,7 +105,7 @@ async def general_exception_handler(request: Request, exc: Exception):
 def setup_exception_handlers(app):
     """예외 핸들러 설정"""
     from fastapi import FastAPI
-    from app.util.exceptions import FileException, BusinessException, DatabaseException, ValidationException
+    from util.exceptions import FileException, BusinessException, DatabaseException, ValidationException
     
     # 커스텀 예외 핸들러 등록 (각 예외 타입별로)
     app.add_exception_handler(CustomException, custom_exception_handler)

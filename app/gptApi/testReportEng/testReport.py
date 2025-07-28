@@ -1,6 +1,6 @@
-from app.gptApi.gptEngine import GptBase
-from app.domain.Hmt import Hmt
-from app.domain.Cst import Cst
+from gptApi.gptEngine import GptBase
+from domain.Hmt import Hmt
+from domain.Cst import Cst
 
 class testReport(GptBase):
     def __new__(cls,hmt:Hmt,cst:Cst):

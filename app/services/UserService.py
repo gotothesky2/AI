@@ -1,6 +1,6 @@
-from app.repository.userRepository import userRepository, UserRepository
-from app.domain.User import User
-from app.util.Transactional import Transactional
+from repository.userRepository import userRepository, UserRepository
+from domain.User import User
+from util.Transactional import Transactional
 from datetime import datetime
 import uuid
 
