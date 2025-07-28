@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Depends
 from typing import List
-from app.services.HmtService import hmtService
-from app.DTO.HmtDTO import HmtResponse
-from app.domain.Hmt import Hmt
-from app.util.exceptions import (
+from services.HmtService import hmtService
+from DTO.HmtDTO import HmtResponse
+from domain.Hmt import Hmt
+from util.exceptions import (
     ErrorCode, 
     raise_business_exception, 
     raise_file_exception,
@@ -11,7 +11,7 @@ from app.util.exceptions import (
     FileException,
     DatabaseException
 )
-from app.util.exception_handler import create_success_response
+from util.exception_handler import create_success_response
 
 router = APIRouter(prefix="/hmt")
 

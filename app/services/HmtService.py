@@ -1,16 +1,16 @@
 from fastapi import UploadFile
 
-from app.repository.userRepository import UserRepository
-from app.util.PdfExtracter.HmtExtracter import HmtExtracter
-from app.util.Transactional import Transactional
-from app.repository.hmtRepository import hmtRepository, HmtRepository
-from app.repository.userRepository import userRepository,UserRepository
-from app.domain.Hmt import Hmt
+from repository.userRepository import UserRepository
+from util.PdfExtracter.HmtExtracter import HmtExtracter
+from util.Transactional import Transactional
+from repository.hmtRepository import hmtRepository, HmtRepository
+from repository.userRepository import userRepository,UserRepository
+from domain.Hmt import Hmt
 import uuid
-from app.domain.User import User
+from domain.User import User
 from datetime import datetime
-from app.DTO.HmtDTO import HmtResponse
-from app.util.exceptions import (
+from DTO.HmtDTO import HmtResponse
+from util.exceptions import (
     ErrorCode, 
     raise_business_exception, 
     raise_database_exception, 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from app.domain.Hmt import Hmt
+from domain.Hmt import Hmt
 class HmtResponse(BaseModel):
     rScore: float
     iScore: float

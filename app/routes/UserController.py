@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 from typing import List
-from app.services.UserService import userService
-from app.DTO.UserDTO import UserCreateRequest, UserUpdateRequest, UserResponse
-from app.domain.User import User
-from app.util.exceptions import (
+from services.UserService import userService
+from DTO.UserDTO import UserCreateRequest, UserUpdateRequest, UserResponse
+from domain.User import User
+from util.exceptions import (
     ErrorCode, 
     raise_business_exception, 
     raise_validation_exception
 )
-from app.util.exception_handler import create_success_response
+from util.exception_handler import create_success_response
 
 router = APIRouter(prefix="/users")
 

@@ -1,14 +1,14 @@
 from fastapi import UploadFile
 
-from app.repository.userRepository import userRepository,UserRepository
-from app.util.PdfExtracter.CstExtracter import CstExtracter
-from app.util.Transactional import Transactional
-from app.repository.cstRepository import CstRepository,cstRepository
-from app.domain.Cst import Cst
-from app.DTO.CstDTO import CstResponse
+from repository.userRepository import userRepository,UserRepository
+from util.PdfExtracter.CstExtracter import CstExtracter
+from util.Transactional import Transactional
+from repository.cstRepository import CstRepository,cstRepository
+from domain.Cst import Cst
+from DTO.CstDTO import CstResponse
 import uuid
-from app.domain.User import User
-from app.util.exceptions import (
+from domain.User import User
+from util.exceptions import (
     ErrorCode, 
     raise_business_exception, 
     raise_database_exception, 

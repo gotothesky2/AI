@@ -1,7 +1,7 @@
 import fitz
 from fastapi import UploadFile
 from pathlib import Path
-from app.util.exceptions import ErrorCode, raise_business_exception, raise_file_exception
+from util.exceptions import ErrorCode, raise_business_exception, raise_file_exception
 
 class HmtExtracter:
     REQUIRED_KEYWORD="직업흥미검사(H) 주요 결과"
