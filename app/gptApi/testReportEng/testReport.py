@@ -178,5 +178,4 @@ class testReport(GptBase):
 
         """
         return prompt
-
     
