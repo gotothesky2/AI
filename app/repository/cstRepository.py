@@ -1,4 +1,4 @@
-from app.domain.Cst import Cst
+from domain.Cst import Cst
 from .Repository import BaseRepository
 
 class CstRepository(BaseRepository[Cst]):

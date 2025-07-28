@@ -1,5 +1,5 @@
-from app.domain.User import User
-from app.repository.Repository import BaseRepository
+from domain.User import User
+from repository.Repository import BaseRepository
 from typing import Optional
 
 class UserRepository(BaseRepository):

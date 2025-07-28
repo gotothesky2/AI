@@ -52,7 +52,7 @@ def test_user():
     # 기존 Spring DB 테이블들 사용 (테이블 생성 불필요)
     
     # 기존 Spring DB에 있는 사용자 조회
-    existing_uid = "cfd0861b-ff87-48e3-8755-6ad68e5232c5"
+    existing_uid = "1080567b-0077-4e2a-882d-26e4746b8fed"
     user = sess.query(User).filter(User.uid == existing_uid).first()
     if not user:
         pytest.skip(f"테스트 사용자 {existing_uid}가 DB에 존재하지 않습니다.")

@@ -1,6 +1,6 @@
-from app.gptApi.gptEngine import GptBase
-from app.domain.Hmt import Hmt
-from app.domain.Cst import Cst
+from gptApi.gptEngine import GptBase
+from domain.Hmt import Hmt
+from domain.Cst import Cst
 
 class testReport(GptBase):
     def __new__(cls,hmt:Hmt,cst:Cst):
@@ -139,11 +139,15 @@ class testReport(GptBase):
             - 대표 대학계열: 예술/디자인/미술계열
             - 대표 학과: 미술학과, 시각디자인학과, 공예과, 패션디자인학과, 영상학과, 만화애니메이션학과, 인테리어디자인학과, 사진학과, 디지털아트학과
 
-
-
             """
         return prompt
 
+    @staticmethod
+    def output_constructor() -> str:
+        """
+
+        """
+        pass
     @staticmethod
     def user_prompt(hmt:Hmt,cst:Cst)->str:
         prompt=f"""
@@ -174,5 +178,4 @@ class testReport(GptBase):
 
         """
         return prompt
-
     

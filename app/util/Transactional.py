@@ -1,5 +1,5 @@
-from app.db import SessionLocal
-from app.util.globalDB.db_context import set_db,reset_db
+from db import SessionLocal
+from util.globalDB.db_context import set_db,reset_db
 from functools import wraps
 
 
