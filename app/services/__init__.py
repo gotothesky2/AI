@@ -5,10 +5,10 @@
 
 from .HmtService import HmtService
 from .CstService import CstService
-# from .ReportService import ReportService  # 임시 주석 처리
+from .ReportService import ReportService
 
 __all__ = [
     "HmtService",
-    "CstService"
-    # "ReportService"  # 임시 주석 처리
+    "CstService",
+    "ReportService"
 ]
