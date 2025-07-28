@@ -27,8 +27,8 @@ class ErrorCode(Enum):
     # 검사 관련 에러 (4000-4999)
     HMT_NOT_FOUND = (4000, "흥미검사를 찾을 수 없습니다.")
     HMT_PROCESSING_ERROR = (4001, "흥미검사 처리 중 오류가 발생했습니다.")
-    CST_NOT_FOUND = (4100, "창의성검사를 찾을 수 없습니다.")
-    CST_PROCESSING_ERROR = (4101, "창의성검사 처리 중 오류가 발생했습니다.")
+    CST_NOT_FOUND = (4100, "직업적성검사를 찾을 수 없습니다.")
+    CST_PROCESSING_ERROR = (4101, "직업적성검사 처리 중 오류가 발생했습니다.")
     
     # 데이터베이스 관련 에러 (5000-5999)
     DATABASE_ERROR = (5000, "데이터베이스 오류가 발생했습니다.")

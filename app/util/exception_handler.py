@@ -69,6 +69,21 @@ async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
 
 async def general_exception_handler(request: Request, exc: Exception):
     """일반 예외 처리"""
+    # CustomException의 서브클래스인지 확인
+    if isinstance(exc, CustomException):
+        logger.error(f"Custom Exception: {exc.error_code.name} - {exc.detail}")
+        
+        return JSONResponse(
+            status_code=create_http_exception(exc).status_code,
+            content={
+                "success": False,
+                "error": exc.to_dict(),
+                "path": str(request.url),
+                "method": request.method
+            }
+        )
+    
+    # 일반 예외 처리
     logger.error(f"Unexpected Error: {str(exc)}")
     logger.error(traceback.format_exc())
     
@@ -90,9 +105,14 @@ async def general_exception_handler(request: Request, exc: Exception):
 def setup_exception_handlers(app):
     """예외 핸들러 설정"""
     from fastapi import FastAPI
+    from app.util.exceptions import FileException, BusinessException, DatabaseException, ValidationException
     
-    # 커스텀 예외 핸들러 등록
+    # 커스텀 예외 핸들러 등록 (각 예외 타입별로)
     app.add_exception_handler(CustomException, custom_exception_handler)
+    app.add_exception_handler(FileException, custom_exception_handler)
+    app.add_exception_handler(BusinessException, custom_exception_handler)
+    app.add_exception_handler(DatabaseException, custom_exception_handler)
+    app.add_exception_handler(ValidationException, custom_exception_handler)
     
     # FastAPI 기본 예외 핸들러 등록
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
