@@ -5,8 +5,10 @@
 
 from .HmtService import HmtService
 from .CstService import CstService
+from .ReportService import ReportService
 
 __all__ = [
     "HmtService",
-    "CstService"
+    "CstService",
+    "ReportService"
 ]
