@@ -14,5 +14,6 @@ __all__ = [
     "services",
     "routes",
     "util",
-    "gptApi"
+    "gptApi",
+    "globals"  # global → globals로 변경
 ]

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.HmtController import router as hmt_router
 from routes.CstController import router as cst_router
 from routes.UserController import router as user_router
-from util.exception_handler import setup_exception_handlers
+from globals import setup_exception_handlers
 import uvicorn
 import logging
 
@@ -48,7 +48,7 @@ async def health_check():
 @app.get("/test-error")
 async def test_error():
     """예외 처리 테스트 엔드포인트"""
-    from util.exceptions import ErrorCode, raise_file_exception
+    from globals import ErrorCode, raise_file_exception
     raise_file_exception(ErrorCode.PDF_PROCESSING_ERROR, "테스트 에러 메시지입니다.")
 
 if __name__ == "__main__":

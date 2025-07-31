@@ -3,12 +3,12 @@ from typing import List
 from services.UserService import userService
 from DTO.UserDTO import UserCreateRequest, UserUpdateRequest, UserResponse
 from domain.User import User
-from util.exceptions import (
+from globals import (
     ErrorCode, 
     raise_business_exception, 
     raise_validation_exception
 )
-from util.exception_handler import create_success_response
+from globals import create_success_response
 
 router = APIRouter(prefix="/users")
 
