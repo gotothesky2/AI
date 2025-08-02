@@ -1,5 +1,6 @@
 from fastapi import UploadFile
 
+import datetime
 from repository.userRepository import userRepository,UserRepository
 from util.PdfExtracter.CstExtracter import CstExtracter
 from util.Transactional import Transactional
@@ -8,6 +9,8 @@ from domain.Cst import Cst
 from DTO.CstDTO import CstResponse
 import uuid
 from domain.User import User
+from util.S3 import S3Util
+
 from globals import (
     ErrorCode, 
     raise_business_exception, 
@@ -22,14 +25,20 @@ from globals import (
 class MockS3Client:
     def upload_bytes(self, pdf_bytes: bytes, key: str) -> str:
         """Mock S3 업로드 - 실제 업로드 없이 가짜 URL 반환"""
-        return f"https://mock-s3-bucket.s3.amazonaws.com/{key}"
+        return f"https://mock-s3-bucket.s3.amazonaws.com/{key}.pdf"
 
 class CstService:
+    @staticmethod
+    def _s3KeyGenerator(user:User)->str:
+        return f"cst/{user.name}/{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+
+
     def __init__(self,cstRepository: CstRepository,userRepository: UserRepository):
         self._cstRepository = cstRepository
         self._userRepository = userRepository
         # Mock S3 클라이언트로 초기화 (추후 실제 S3 클라이언트로 교체 가능)
-        self._s3 = MockS3Client()
+        self._s3 = S3Util()
 
     #직업적성검사 첨부 기능
     @Transactional
@@ -50,8 +59,12 @@ class CstService:
             raise e
         
         # S3 업로드
-        key = f"cst/{user.uid}/{uuid.uuid4().hex}.pdf"
-        pdf_url = self._s3.upload_bytes(pdf_bytes, key)
+        try:
+            self._s3.upload_file(file,self._s3KeyGenerator(user))
+
+        except Exception as e:
+            raise e
+
 
         newCst=Cst(
             user=user,
