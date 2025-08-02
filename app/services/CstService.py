@@ -21,18 +21,7 @@ from globals import (
     DatabaseException
 )
 
-# Mock S3 클라이언트 (개발/테스트용)
-class MockS3Client:
-    def upload_bytes(self, pdf_bytes: bytes, key: str) -> str:
-        """Mock S3 업로드 - 실제 업로드 없이 가짜 URL 반환"""
-        return f"https://mock-s3-bucket.s3.amazonaws.com/{key}.pdf"
-
 class CstService:
-    @staticmethod
-    def _s3KeyGenerator(user:User)->str:
-        return f"cst/{user.name}/{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-
-
 
     def __init__(self,cstRepository: CstRepository,userRepository: UserRepository):
         self._cstRepository = cstRepository
@@ -60,7 +49,8 @@ class CstService:
         
         # S3 업로드
         try:
-            self._s3.upload_file(file,self._s3KeyGenerator(user))
+            key=self._s3.s3KeyGenerator(user,"cst")
+            self._s3.upload_file(file,key)
 
         except Exception as e:
             raise e
@@ -68,7 +58,7 @@ class CstService:
 
         newCst=Cst(
             user=user,
-            pdfLink=pdf_url,
+            pdfLink=key,
             cstGradeNum=user.gradeNum,
             mathScore=scores.get("수리·논리력",-1),
             artScore=scores.get("예술시각능력",-1),
@@ -92,6 +82,7 @@ class CstService:
         removeObj = self._cstRepository.getById(cstId)
         if removeObj is None:
             raise Exception(f"Cst {cstId} not found")
+        self._s3.delete_file(removeObj.pdfLink)
         self._cstRepository.remove(removeObj)
 
     @Transactional
@@ -110,7 +101,7 @@ class CstService:
         allCsts = user.csts
         if allCsts is None:
             raise Exception(f"Cst {user.uid} not found")
-        return [CstResponse.model_validate(c, from_attributes=True) for c in allCsts]
+        return [CstResponse.model_validate(c, from_attributes=True).model_copy(update={"downloadUrl":self._s3.get_presigned_url(c.pdfLink)}).model_dump() for c in allCsts]
 
 cstService = CstService(cstRepository,userRepository)
 
