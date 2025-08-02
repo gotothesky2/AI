@@ -10,6 +10,7 @@ import uuid
 from domain.User import User
 from datetime import datetime
 from DTO.HmtDTO import HmtResponse
+from util.S3 import S3Util
 from globals import (
     ErrorCode, 
     raise_business_exception, 
@@ -20,18 +21,13 @@ from globals import (
     DatabaseException
 )
 
-# Mock S3 클라이언트 (개발/테스트용)
-class MockS3Client:
-    def upload_bytes(self, pdf_bytes: bytes, key: str) -> str:
-        """Mock S3 업로드 - 실제 업로드 없이 가짜 URL 반환"""
-        return f"https://mock-s3-bucket.s3.amazonaws.com/{key}"
 
 class HmtService:
     def __init__(self,hmtRepository: HmtRepository,userRepository: UserRepository):
         self._hmtRepository= hmtRepository
         self._userRepository = userRepository
         # Mock S3 클라이언트로 초기화 (추후 실제 S3 클라이언트로 교체 가능)
-        self._s3 = MockS3Client()
+        self._s3 = S3Util()
 
     #흥미검사 첨부 기능
     @Transactional
@@ -73,8 +69,8 @@ class HmtService:
             
             # 4. S3 업로드
             try:
-                key = f"hmt/{user.uid}/{uuid.uuid4().hex}.pdf"
-                pdf_url = self._s3.upload_bytes(pdf_bytes, key)
+                key = self._s3.s3KeyGenerator(user,"hmt")
+                self._s3.upload_file(file,key)
             except Exception as e:
                 raise_business_exception(
                     ErrorCode.S3_UPLOAD_ERROR,
@@ -86,7 +82,7 @@ class HmtService:
                 newHmt = Hmt(
                     user=user,
                     hmtGradeNum=user.gradeNum,
-                    pdfLink=pdf_url,
+                    pdfLink=key,
                     rScore=scores.get("R", -1),
                     iScore=scores.get("I", -1),
                     aScore=scores.get("A", -1),
@@ -129,7 +125,7 @@ class HmtService:
                     ErrorCode.HMT_NOT_FOUND,
                     f"삭제할 흥미검사 ID '{hmtId}'를 찾을 수 없습니다."
                 )
-            
+            self._s3.delete_file(removeObj.pdfLink)
             self._hmtRepository.remove(removeObj)
             
         except BusinessException:
@@ -172,7 +168,7 @@ class HmtService:
             allHmt = user.hmts
             
             # 빈 리스트도 정상적인 결과로 처리
-            return [HmtResponse.model_validate(c, from_attributes=True) for c in allHmt]
+            return [HmtResponse.model_validate(c, from_attributes=True).model_copy(update={"DownloadUrl":self._s3.get_presigned_url(c.pdfLink)}).model_dump() for c in allHmt]
             
         except BusinessException:
             raise

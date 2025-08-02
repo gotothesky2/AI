@@ -3,8 +3,6 @@ from datetime import datetime
 
 class CstResponse(BaseModel):
     id: int
-    uid: str
-    pdfLink: str
     cstGradeNum: int
     cstTermNum: int
     uploadTime: datetime
@@ -19,5 +17,6 @@ class CstResponse(BaseModel):
     handScore: float
     relationScore: float
     physicalScore: float
+    downloadUrl: str=None
 
     model_config = ConfigDict(from_attributes=True)
