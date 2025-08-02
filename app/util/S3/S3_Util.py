@@ -13,12 +13,13 @@ class S3Util:
         load_dotenv()
         aws_access_key_id = os.getenv("AWS_S3_ACCESS_KEY","")
         aws_secret_access_key = os.getenv("AWS_S3_SECRET_KEY","")
+        aws_region = "ap-northeast-2"
         self.bucket=os.getenv("AWS_S3_BUCKET_NAME","")
         if not aws_access_key_id or not aws_secret_access_key or not self.bucket:
             raise Exception("S3 환경 변수가 설정 되지 않았습니다.")
         self.s3_client = boto3.client(
             "s3",
-            region_name='ap-northeast-2',
+            region_name=aws_region,
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
             config = Config(signature_version='s3v4')
