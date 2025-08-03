@@ -7,12 +7,14 @@ from .User import User
 from .Hmt import Hmt
 from .Cst import Cst
 from .entity.BaseEntity import BaseEntity
+from .AiReport import AiReport
 
 __all__ = [
     "User",
-    "Hmt", 
+    "Hmt",
     "Cst",
-    "BaseEntity"
+    "BaseEntity",
+    "AiReport"
 ]
 
 

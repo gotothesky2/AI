@@ -7,12 +7,14 @@ from .Repository import BaseRepository
 from .userRepository import UserRepository
 from .hmtRepository import HmtRepository
 from .cstRepository import CstRepository
+from .aiReportRepository import AiReportRepository
 
 __all__ = [
     "BaseRepository",
     "UserRepository",
     "HmtRepository", 
-    "CstRepository"
+    "CstRepository",
+    "AiReportRepository"
 ]
 
 
