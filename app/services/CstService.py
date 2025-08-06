@@ -1,5 +1,6 @@
 from fastapi import UploadFile
 
+import datetime
 from repository.userRepository import userRepository,UserRepository
 from util.PdfExtracter.CstExtracter import CstExtracter
 from util.Transactional import Transactional
@@ -8,6 +9,8 @@ from domain.Cst import Cst
 from DTO.CstDTO import CstResponse
 import uuid
 from domain.User import User
+from util.S3 import S3Util
+
 from globals import (
     ErrorCode, 
     raise_business_exception, 
@@ -18,18 +21,13 @@ from globals import (
     DatabaseException
 )
 
-# Mock S3 클라이언트 (개발/테스트용)
-class MockS3Client:
-    def upload_bytes(self, pdf_bytes: bytes, key: str) -> str:
-        """Mock S3 업로드 - 실제 업로드 없이 가짜 URL 반환"""
-        return f"https://mock-s3-bucket.s3.amazonaws.com/{key}"
-
 class CstService:
+
     def __init__(self,cstRepository: CstRepository,userRepository: UserRepository):
         self._cstRepository = cstRepository
         self._userRepository = userRepository
         # Mock S3 클라이언트로 초기화 (추후 실제 S3 클라이언트로 교체 가능)
-        self._s3 = MockS3Client()
+        self._s3 = S3Util()
 
     #직업적성검사 첨부 기능
     @Transactional
@@ -50,12 +48,17 @@ class CstService:
             raise e
         
         # S3 업로드
-        key = f"cst/{user.uid}/{uuid.uuid4().hex}.pdf"
-        pdf_url = self._s3.upload_bytes(pdf_bytes, key)
+        try:
+            key=self._s3.s3KeyGenerator(user,"cst")
+            self._s3.upload_file(file,key)
+
+        except Exception as e:
+            raise e
+
 
         newCst=Cst(
             user=user,
-            pdfLink=pdf_url,
+            pdfLink=key,
             cstGradeNum=user.gradeNum,
             mathScore=scores.get("수리·논리력",-1),
             artScore=scores.get("예술시각능력",-1),
@@ -79,6 +82,7 @@ class CstService:
         removeObj = self._cstRepository.getById(cstId)
         if removeObj is None:
             raise Exception(f"Cst {cstId} not found")
+        self._s3.delete_file(removeObj.pdfLink)
         self._cstRepository.remove(removeObj)
 
     @Transactional
@@ -97,7 +101,7 @@ class CstService:
         allCsts = user.csts
         if allCsts is None:
             raise Exception(f"Cst {user.uid} not found")
-        return [CstResponse.model_validate(c, from_attributes=True) for c in allCsts]
+        return [CstResponse.model_validate(c, from_attributes=True).model_copy(update={"downloadUrl":self._s3.get_presigned_url(c.pdfLink)}).model_dump() for c in allCsts]
 
 cstService = CstService(cstRepository,userRepository)
 
