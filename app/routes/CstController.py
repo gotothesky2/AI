@@ -3,6 +3,8 @@ from typing import List
 from services.CstService import cstService
 from DTO.CstDTO import CstResponse
 from domain.Cst import Cst
+from domain.User import User
+from login.oauth_jwt_auth import get_current_user
 from globals import (
     ErrorCode, 
     raise_business_exception, 
@@ -18,7 +20,7 @@ router = APIRouter(prefix="/cst")
 @router.post("", summary="직업적성검사 생성")
 async def create_cst(
     file: UploadFile = File(..., description="PDF 파일"),
-    user_id: str = "temp_user_id"  # TODO: JWT 인증 구현 후 실제 사용자 ID 사용
+    current_user: User = Depends(get_current_user)
 ):
     """
     PDF 파일을 업로드하여 직업적성검사를 생성합니다.
@@ -32,7 +34,7 @@ async def create_cst(
     
     try:
         # 2. 서비스단 호출
-        result = cstService.createCst(user_id, file)
+        result = cstService.createCst(current_user.uid, file)
         return create_success_response(result, "직업적성검사가 성공적으로 생성되었습니다.")
         
     except FileException as e:
@@ -83,24 +85,24 @@ async def get_cst(cst_id: int):
             f"직업적성검사 조회 API 예상치 못한 오류 - {str(e)}"
         )
 
-@router.get("/user/{user_id}", summary="사용자별 직업적성검사 목록")
-async def get_user_csts(user_id: str):
+@router.get("/my", summary="내 직업적성검사 목록")
+async def get_my_csts(current_user: User = Depends(get_current_user)):
     """
-    특정 사용자의 모든 직업적성검사를 조회합니다.
+    현재 로그인된 사용자의 모든 직업적성검사를 조회합니다.
     """
     try:
-        result = cstService.allCstByUser(user_id)
-        return create_success_response(result, "사용자별 직업적성검사 목록 조회가 완료되었습니다.")
+        result = cstService.allCstByUser(current_user.uid)
+        return create_success_response(result, "내 직업적성검사 목록 조회가 완료되었습니다.")
     except BusinessException as e:
         # 서비스단 예외를 라우트 컨텍스트로 재발생
         raise_business_exception(
             e.error_code,
-            f"사용자별 직업적성검사 목록 API 실패 - {e.detail}"
+            f"내 직업적성검사 목록 API 실패 - {e.detail}"
         )
     except Exception as e:
         raise_business_exception(
             ErrorCode.UNKNOWN_ERROR,
-            f"사용자별 직업적성검사 목록 API 예상치 못한 오류 - {str(e)}"
+            f"내 직업적성검사 목록 API 예상치 못한 오류 - {str(e)}"
         )
 
 @router.delete("/{cst_id}", summary="직업적성검사 삭제")
