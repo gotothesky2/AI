@@ -10,8 +10,7 @@ class OAuth(Base):
         'mysql_engine': 'InnoDB',
         'mysql_charset': 'utf8mb4',
     }
-
-    id=Column(BigInteger, primary_key=True)
+    auth_id=Column(BigInteger,name="auth_id", primary_key=True, autoincrement=True,nullable=False)
     providerUserId=Column(String(255),name='provider_user_id', nullable=False)
     accessToken=Column(String(255),name='access_token', nullable=False)
     expireDate=Column(DateTime,name='expire_date', nullable=False)
