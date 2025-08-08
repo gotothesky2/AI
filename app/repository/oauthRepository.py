@@ -10,6 +10,10 @@ class OAuthRepository(BaseRepository[OAuth]):
         """액세스 토큰으로 OAuth 레코드 조회"""
         return self.session.query(OAuth).filter(OAuth.accessToken == access_token).first()
     
+    def findByProviderUserId(self, provider_user_id: str) -> Optional[OAuth]:
+        """provider_user_id로 OAuth 레코드 조회"""
+        return self.session.query(OAuth).filter(OAuth.providerUserId == provider_user_id).first()
+    
     def findByUserId(self, user_id: str) -> list[OAuth]:
         """사용자 ID로 OAuth 레코드 목록 조회"""
         return self.session.query(OAuth).filter(OAuth.uid == user_id).all()

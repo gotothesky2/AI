@@ -1,10 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routes.HmtController import router as hmt_router
 from routes.CstController import router as cst_router
 from routes.UserController import router as user_router
 from routes.AuthController import router as auth_router
 from globals import setup_exception_handlers
+from util.globalDB.db_context import set_db, reset_db
+from db import SessionLocal
 import uvicorn
 import logging
 
@@ -21,6 +23,22 @@ app = FastAPI(
 
 # 전역 예외 처리 설정
 setup_exception_handlers(app)
+
+# 데이터베이스 미들웨어 추가
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    """각 요청마다 데이터베이스 세션을 생성하고 관리하는 미들웨어"""
+    db = SessionLocal()
+    token = set_db(db)
+    try:
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+        reset_db(token)
 
 # CORS 미들웨어 설정
 app.add_middleware(

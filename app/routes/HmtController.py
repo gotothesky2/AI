@@ -3,7 +3,7 @@ from typing import List
 from services.HmtService import hmtService
 from DTO.HmtDTO import HmtResponse
 from domain.Hmt import Hmt
-from login.simple_jwt_auth import get_current_user
+from login.oauth_jwt_auth import get_current_user
 from domain.User import User
 from globals import (
     ErrorCode, 
