@@ -2,11 +2,7 @@ from sqlalchemy.orm import relationship
 from .entity.BaseEntity import BaseEntity
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, BigInteger
 from datetime import datetime
-
-def default_term() -> int:
-    """현재 월이 1~6월이면 1학기, 7~12월이면 2학기 반환"""
-    month = datetime.now().month
-    return 1 if month < 7 else 2
+from util.termGenerator import default_term
 
 class Cst(BaseEntity):
     __tablename__ = 'cst'
