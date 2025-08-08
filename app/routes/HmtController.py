@@ -62,6 +62,26 @@ async def create_hmt(
             f"흥미검사 API 예상치 못한 오류 - {str(e)}"
         )
 
+@router.get("/my", summary="내 흥미검사 목록")
+async def get_my_hmts(current_user: User = Depends(get_current_user)):
+    """
+    현재 로그인된 사용자의 모든 흥미검사를 조회합니다.
+    """
+    try:
+        result = hmtService.allHmtByUserId(current_user.uid)
+        return create_success_response(result, "내 흥미검사 목록 조회가 완료되었습니다.")
+    except BusinessException as e:
+        # 서비스단 예외를 라우트 컨텍스트로 재발생
+        raise_business_exception(
+            e.error_code,
+            f"내 흥미검사 목록 API 실패 - {e.detail}"
+        )
+    except Exception as e:
+        raise_business_exception(
+            ErrorCode.UNKNOWN_ERROR,
+            f"내 흥미검사 목록 API 예상치 못한 오류 - {str(e)}"
+        )
+
 @router.get("/{hmt_id}", summary="흥미검사 조회")
 async def get_hmt(hmt_id: int):
     """
@@ -85,25 +105,7 @@ async def get_hmt(hmt_id: int):
             f"흥미검사 조회 API 예상치 못한 오류 - {str(e)}"
         )
 
-@router.get("/user/{user_id}", summary="사용자별 흥미검사 목록")
-async def get_user_hmts(current_user: User = Depends(get_current_user)):
-    """
-    특정 사용자의 모든 흥미검사를 조회합니다.
-    """
-    try:
-        result = hmtService.allHmtByUserId(current_user.uid)
-        return create_success_response(result, "사용자별 흥미검사 목록 조회가 완료되었습니다.")
-    except BusinessException as e:
-        # 서비스단 예외를 라우트 컨텍스트로 재발생
-        raise_business_exception(
-            e.error_code,
-            f"사용자별 흥미검사 목록 API 실패 - {e.detail}"
-        )
-    except Exception as e:
-        raise_business_exception(
-            ErrorCode.UNKNOWN_ERROR,
-            f"사용자별 흥미검사 목록 API 예상치 못한 오류 - {str(e)}"
-        )
+
 
 @router.delete("/{hmt_id}", summary="흥미검사 삭제")
 async def delete_hmt(hmt_id: int):

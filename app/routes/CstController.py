@@ -62,6 +62,26 @@ async def create_cst(
             f"직업적성검사 API 예상치 못한 오류 - {str(e)}"
         )
 
+@router.get("/my", summary="내 직업적성검사 목록")
+async def get_my_csts(current_user: User = Depends(get_current_user)):
+    """
+    현재 로그인된 사용자의 모든 직업적성검사를 조회합니다.
+    """
+    try:
+        result = cstService.allCstByUser(current_user.uid)
+        return create_success_response(result, "내 직업적성검사 목록 조회가 완료되었습니다.")
+    except BusinessException as e:
+        # 서비스단 예외를 라우트 컨텍스트로 재발생
+        raise_business_exception(
+            e.error_code,
+            f"내 직업적성검사 목록 API 실패 - {e.detail}"
+        )
+    except Exception as e:
+        raise_business_exception(
+            ErrorCode.UNKNOWN_ERROR,
+            f"내 직업적성검사 목록 API 예상치 못한 오류 - {str(e)}"
+        )
+
 @router.get("/{cst_id}", summary="직업적성검사 조회")
 async def get_cst(cst_id: int):
     """
@@ -83,26 +103,6 @@ async def get_cst(cst_id: int):
         raise_business_exception(
             ErrorCode.UNKNOWN_ERROR,
             f"직업적성검사 조회 API 예상치 못한 오류 - {str(e)}"
-        )
-
-@router.get("/my", summary="내 직업적성검사 목록")
-async def get_my_csts(current_user: User = Depends(get_current_user)):
-    """
-    현재 로그인된 사용자의 모든 직업적성검사를 조회합니다.
-    """
-    try:
-        result = cstService.allCstByUser(current_user.uid)
-        return create_success_response(result, "내 직업적성검사 목록 조회가 완료되었습니다.")
-    except BusinessException as e:
-        # 서비스단 예외를 라우트 컨텍스트로 재발생
-        raise_business_exception(
-            e.error_code,
-            f"내 직업적성검사 목록 API 실패 - {e.detail}"
-        )
-    except Exception as e:
-        raise_business_exception(
-            ErrorCode.UNKNOWN_ERROR,
-            f"내 직업적성검사 목록 API 예상치 못한 오류 - {str(e)}"
         )
 
 @router.delete("/{cst_id}", summary="직업적성검사 삭제")

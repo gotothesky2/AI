@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routes.HmtController import router as hmt_router
 from routes.CstController import router as cst_router
-from routes.UserController import router as user_router
 from routes.AuthController import router as auth_router
 from globals import setup_exception_handlers
 from util.globalDB.db_context import set_db, reset_db
@@ -53,7 +52,6 @@ app.add_middleware(
 app.include_router(auth_router, tags=["인증"])
 app.include_router(hmt_router, tags=["흥미검사"])
 app.include_router(cst_router, tags=["직업적성검사"])
-app.include_router(user_router, tags=["사용자"])
 
 @app.get("/")
 async def root():
