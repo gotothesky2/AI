@@ -1,7 +1,7 @@
 import jwt
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from repository.userRepository import userRepository
@@ -88,13 +88,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             detail="OAuth 정보를 찾을 수 없습니다."
         )
 
-    # 3. 만료 확인
-    if oauth_record.expireDate < datetime.now():
-        logger.error(f"OAuth 토큰 만료: {oauth_record.expireDate}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="토큰이 만료되었습니다."
-        )
+    # 3. 만료 확인 제거 (시간과 상관없이 인증)
+    # OAuth 테이블의 만료 시간은 무시하고 JWT 토큰의 만료 시간만 확인
 
     # 4. OAuth 레코드의 uid로 사용자 정보 조회
     user = userRepository.getById(oauth_record.uid)
