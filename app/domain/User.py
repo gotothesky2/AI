@@ -29,6 +29,7 @@ class User(Base):
     # Python 전용 관계 (실제 테이블에는 없는 논리적 관계)
     hmts = relationship('Hmt', back_populates='user')
     csts = relationship('Cst', back_populates='user')
-    
+    aiReports = relationship('AiReport', back_populates='user')
+    auth=relationship('OAuth', back_populates='user')
     def __repr__(self):
         return f"<User(uid='{self.uid}', name='{getattr(self, 'name', None)}')>"
