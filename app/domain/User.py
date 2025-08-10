@@ -31,5 +31,6 @@ class User(Base):
     csts = relationship('Cst', back_populates='user')
     aiReports = relationship('AiReport', back_populates='user')
     auth=relationship('OAuth', back_populates='user')
+    mocks=relationship('Mock', back_populates='user')
     def __repr__(self):
         return f"<User(uid='{self.uid}', name='{getattr(self, 'name', None)}')>"
