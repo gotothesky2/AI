@@ -5,7 +5,7 @@ from datetime import datetime
 from util.termGenerator import default_term
 
 class AiReport(BaseEntity):
-    __table_args__ = {'extend_existing': True}
+    __tablename__='ai_report'
     id = Column(BigInteger,name='ai_report_id', primary_key=True,autoincrement=True,nullable=False)
     uid = Column(String(36), ForeignKey("user.uid"), name='uid', nullable=False)
     testReport = Column(Text,name='test_report', nullable=True)

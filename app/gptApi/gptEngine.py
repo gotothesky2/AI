@@ -35,9 +35,9 @@ class GptBase(ABC):
     @abstractmethod
     def output_constructor()->str:
         """
-
+        json
         {
-
+            출력 형태 json 작성
         }
         """
         pass
@@ -48,9 +48,9 @@ class GptBase(ABC):
     def get_response(cls, *args, **kwargs):
         return cls.client.chat.completions.create(
             model=cls.model,
-            response_format={"type","json_object"},
+            response_format={"type": "json_object"},
             messages=[
-                {"role": "system", "content": cls.system_prompt()+cls.output_constructor()},
+                {"role": "system", "content":cls.system_prompt()+cls.output_constructor()},
                 {"role": "user", "content": cls.user_prompt(*args, **kwargs)},
             ],
             max_tokens=3000,
