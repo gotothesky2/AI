@@ -3,10 +3,12 @@
 데이터베이스 엔티티 클래스들을 포함합니다.
 """
 
+from .entity.BaseEntity import BaseEntity
+
 from .User import User
 from .Hmt import Hmt
 from .Cst import Cst
-from .entity.BaseEntity import BaseEntity
+
 from .AiReport import AiReport
 from .mock import *
 from .report import *
