@@ -10,7 +10,7 @@ class Mock(Base):
         'mysql_charset': 'utf8mb4'
     }
     id=Column(BigInteger,name='mock_id',primary_key=True)
-    uid=Column(String(36),ForeignKey('user.id'),nullable=False)
+    uid=Column(String(36),ForeignKey('user.uid'),name='uid',nullable=False)
     examYear=Column(Integer,name="exam_year",nullable=False)
     examMonth=Column(Integer,name="exam_month",nullable=False)
     examGrade=Column(Integer,name="exam_grade",nullable=False)

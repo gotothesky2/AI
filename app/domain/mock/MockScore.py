@@ -11,7 +11,7 @@ class MockScore(Base):
     }
 
     id = Column(BigInteger,name='ms_id', primary_key=True)
-    mock_id=Column(BigInteger,ForeignKey('mock.id'),nullable=False)
+    mockId=Column(BigInteger,ForeignKey('mock.mock_id'),name='mock_id',nullable=False)
     createAt=Column(DateTime,name="create_at",nullable=True)
     updateAt=Column(DateTime,name="update_at",nullable=True)
     cumulative=Column(DECIMAL(5,2),name="cumulative",nullable=True)
@@ -21,7 +21,7 @@ class MockScore(Base):
     percetile=Column(Integer,name="percetile",nullable=True)
     standardScore=Column(Integer,name="standard_score",nullable=True)
 
-    mock=relationship("Mock", back_populates="mocks")
+    mock=relationship("Mock", back_populates="mockScores")
 
 
 
