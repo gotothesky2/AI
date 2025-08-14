@@ -75,7 +75,4 @@ class AiReportService:
             if userCst is None:
                 raise BusinessException(ErrorCode.CST_NOT_FOUND,f"직업 적성검사를 실시해 주세요.")
             if request.reportGradeNum>1:
-                for
-
-
-
+                for 
