@@ -5,11 +5,30 @@ from routes.CstController import router as cst_router
 from routes.AuthController import router as auth_router
 from globals import setup_exception_handlers
 from util.globalDB.db_context import set_db, reset_db
-from db import SessionLocal
+from db import SessionLocal,engine
+from domain import *
 import uvicorn
 import logging
 
-# 로깅 설정
+
+def init_database():
+    """데이터베이스 초기화 - 모든 테이블 생성"""
+    try:
+        from domain.entity.BaseEntity import Base
+        Base.metadata.create_all(engine, checkfirst=True)
+        print("✅ 데이터베이스 초기화 완료!")
+
+        # 등록된 테이블 확인
+        registered_tables = list(Base.metadata.tables.keys())
+        print(f"📊 등록된 테이블들: {registered_tables}")
+
+    except Exception as e:
+        print(f"❌ 데이터베이스 초기화 실패: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+init_database()
 logging.basicConfig(level=logging.DEBUG)
 
 # FastAPI 앱 생성
@@ -70,6 +89,7 @@ async def test_error():
     raise_file_exception(ErrorCode.PDF_PROCESSING_ERROR, "테스트 에러 메시지입니다.")
 
 if __name__ == "__main__":
+
     uvicorn.run(
         "run:app",  # app 폴더 안에서 실행될 때의 경로
         host="0.0.0.0",
