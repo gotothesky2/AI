@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from fastapi import HTTPException, status
 from dotenv import load_dotenv
+import pytz
 
 load_dotenv()
 
@@ -23,7 +24,16 @@ class JWTUtil:
     def verify_token(self, token: str) -> Dict[str, Any]:
         """JWT 토큰 검증 및 페이로드 반환"""
         try:
+            # 서울 시간대 설정
+            seoul_tz = pytz.timezone('Asia/Seoul')
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            
+            # 토큰 만료 시간을 서울 시간대로 변환하여 로깅
+            if 'exp' in payload:
+                exp_timestamp = payload['exp']
+                exp_datetime = datetime.fromtimestamp(exp_timestamp, seoul_tz)
+                print(f"토큰 만료 시간 (서울): {exp_datetime}")
+            
             return payload
         except jwt.ExpiredSignatureError:
             raise HTTPException(
@@ -51,11 +61,14 @@ class JWTUtil:
 
     def create_token(self, user_id: str, expires_delta: timedelta = None) -> str:
         """JWT 토큰 생성 (환경변수 사용)"""
+        # 서울 시간대 설정
+        seoul_tz = pytz.timezone('Asia/Seoul')
+        
         if expires_delta:
-            expire = datetime.utcnow() + expires_delta
+            expire = datetime.now(seoul_tz) + expires_delta
         else:
             # 기본값으로 환경변수 사용
-            expire = datetime.utcnow() + timedelta(seconds=self.token_expiration)
+            expire = datetime.now(seoul_tz) + timedelta(seconds=self.token_expiration)
 
         to_encode = {"uid": user_id, "exp": expire}
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)

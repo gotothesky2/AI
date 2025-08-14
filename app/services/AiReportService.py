@@ -73,15 +73,9 @@ class AiReportService:
                 raise BusinessException(ErrorCode.HMT_NOT_FOUND,f"직업 흥미검사를 실시해주세요.")
             userCst=self._cstRepository.getUserCstById(user_id)
             if userCst is None:
-                raise BusinessException(ErrorCode.FILE_NOT_FOUND,f"직업 적성검사를 실시해 주세요.")
+                raise BusinessException(ErrorCode.CST_NOT_FOUND,f"직업 적성검사를 실시해 주세요.")
             if request.reportGradeNum>1:
                 for
-
-
-
-
-
-
 
 
 
