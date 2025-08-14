@@ -38,11 +38,6 @@ class ErrorCode(Enum):
     S3_UPLOAD_ERROR = (6000, "파일 업로드 서비스 오류가 발생했습니다.")
     PDF_PROCESSING_ERROR = (6001, "PDF 처리 중 오류가 발생했습니다.")
     AI_PROCESSING_ERROR = (6002, "AI 분석 처리 중 오류가 발생했습니다.")
-    #AI 서비스 관련 에러
-    AI_REPORT_NOT_FOUND=(7000,"AI REPORT를 찾을 수 없습니다.")
-    AI_REPORT_NOT_VALID_GRADE_TERM=(7001,"부적절한 학년 학기 요청")
-
-
 
 class CustomException(Exception):
     """커스텀 예외 클래스"""

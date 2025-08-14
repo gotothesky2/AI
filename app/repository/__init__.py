@@ -9,12 +9,6 @@ from .hmtRepository import HmtRepository
 from .cstRepository import CstRepository
 from .aiReportRepository import AiReportRepository
 from .oauthRepository import OAuthRepository
-from .universityRepository import UniversityRepository
-from .majorRepository import MajorRepository
-from .fieldRepository import FieldRepository
-from .universityMajorRepository import UniversityMajorRepository
-from .reportScoreRepository import ReportScoreRepository
-from .mockScoreRepository import MockScoreRepository
 
 __all__ = [
     "BaseRepository",
@@ -22,13 +16,7 @@ __all__ = [
     "HmtRepository", 
     "CstRepository",
     "AiReportRepository",
-    "OAuthRepository",
-    "UniversityRepository",
-    "MajorRepository",
-    "FieldRepository",
-    "UniversityMajorRepository",
-    "ReportScoreRepository",
-    "MockScoreRepository"
+    "OAuthRepository"
 ]
 
 
