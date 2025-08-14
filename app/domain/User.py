@@ -1,9 +1,9 @@
 # app/domain/user.py
 from sqlalchemy import Column, String, Integer, DateTime, Enum
 from sqlalchemy.orm import relationship
-from .entity.BaseEntity import BaseEntity
+from .entity.BaseEntity import Base
 
-class User(BaseEntity):
+class User(Base):
     __tablename__ = 'user'
     __table_args__ = {
         'extend_existing': True,
@@ -23,14 +23,13 @@ class User(BaseEntity):
     highschool = Column(String(40), name='highschool', nullable=True)
     sex = Column(String(50), name='sex', nullable=True)  # ENUM
     token = Column(Integer, name='token', nullable=False)
-
+    createdAt = Column(DateTime, name='created_at', nullable=True)
+    updatedAt = Column(DateTime, name='updated_at', nullable=True)
     
     # Python 전용 관계 (실제 테이블에는 없는 논리적 관계)
     hmts = relationship('Hmt', back_populates='user')
     csts = relationship('Cst', back_populates='user')
     aiReports = relationship('AiReport', back_populates='user')
     auth=relationship('OAuth', back_populates='user')
-    mocks=relationship('Mock', back_populates='user')
-    reports = relationship('Report', back_populates='user')
     def __repr__(self):
         return f"<User(uid='{self.uid}', name='{getattr(self, 'name', None)}')>"
