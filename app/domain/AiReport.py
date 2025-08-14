@@ -14,5 +14,7 @@ class AiReport(BaseEntity):
     totalReport = Column(Text,name='total_report', nullable=True)
     reportGradeNum=Column(Integer,name='report_grade_num', nullable=False, default=default_term)
     reportTermNum=Column(Integer,name='report_term_num', nullable=False, default=default_term)
+    HmtID=Column(BigInteger,name='hmt_id', nullable=False)
+    CstID=Column(BigInteger,name='cst_id', nullable=False)
 
     user = relationship("User", back_populates="aiReports")

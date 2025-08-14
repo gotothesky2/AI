@@ -16,7 +16,7 @@ class Report(BaseEntity):
     __table_args__ = {
         'extend_existing': True,
         'mysql_engine': 'InnoDB',
-        'mysql_charset': 'utf8mb4'
+        'mysql_charset': 'utf8mb4 '
     }
     id=Column(BigInteger,name='r_id',primary_key=True)
     categoryName :CategoryName = Column(Integer,name='category_name',nullable=False)
