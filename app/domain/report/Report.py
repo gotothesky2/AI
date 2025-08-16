@@ -22,6 +22,9 @@ class Report(BaseEntity):
     categoryName :CategoryName = Column(Integer,name='category_name',nullable=False)
     categoryGrade=Column(DECIMAL(5,2),name='category_grade',nullable=True)
     uid=Column(String,ForeignKey('user.uid'),name='uid',nullable=False)
+    term=Column(Integer,name='term',nullable=False)
+    userGrade=Column(Integer,name='user_grade',nullable=False)
+
 
     user=relationship("User",back_populates="reports")
     reportScores=relationship("ReportScore",back_populates="report")

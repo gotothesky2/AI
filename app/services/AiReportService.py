@@ -1,18 +1,19 @@
 from domain import User
+from domain import AiReport
 from repository.userRepository import userRepository
 from repository.mockRepository import mockRepository
 from repository.mockScoreRepository import mockScoreRepository
 from repository.cstRepository import cstRepository
 from repository.hmtRepository import hmtRepository
 from repository.aiReportRepository import aiReportRepository
+from repository.reportRepository import reportRepository
 from DTO.AiRepotDto import AiReportResponse, AiReportListResponse, AiReportRequest
-from gptApi.testReportEng import testReport
-
+from gptApi import TestReport
 from util.Transactional import Transactional
 from domain.AiReport import AiReport
 from domain.User import User
 from DTO.AiRepotDto import AiReportResponse,AiReportListResponse
-
+from util.termGenerator import default_term
 from globals import (
     ErrorCode,
     raise_business_exception,
@@ -31,7 +32,7 @@ class AiReportService:
         self._mockRepository = mockRepository
         self._mockScoreRepository = mockScoreRepository
         self._aiReportRepository = aiReportRepository
-
+        self._reportRepository = reportRepository
     @Transactional
     def getAiReportsByUser(self,user_id:str):
         try:
@@ -74,5 +75,50 @@ class AiReportService:
             userCst=self._cstRepository.getUserCstById(user_id)
             if userCst is None:
                 raise BusinessException(ErrorCode.CST_NOT_FOUND,f"직업 적성검사를 실시해 주세요.")
-            if request.reportGradeNum>1:
-                for 
+            if request.reportGradeNum > 1:
+                reports = self._reportRepository.getSortReportByUid(user_id)
+                
+                # 필요한 모든 학년-학기 조합 확인
+                required_reports = set()
+                for grade in range(1, request.reportGradeNum):
+                    for term in range(1, 3):
+                        required_reports.add((grade, term))
+
+                required_reports.add((request.reportGradeNum,1))
+                required_reports.add((request.reportGradeNum, request.reportTermNum))
+
+                
+                # 실제 존재하는 레포트 확인
+                existing_reports = set()
+                for report in reports:
+                    existing_reports.add((report.userGrade, report.term))
+                
+                # 누락된 레포트 확인
+                missing_reports = required_reports - existing_reports
+                
+                if missing_reports:
+                    missing_list = [f"{grade}학년 {term}학기" for grade, term in sorted(missing_reports)]
+                    raise BusinessException(
+                        ErrorCode.AI_REPORT_NOT_VALID_GRADE_TERM,
+                        f"AI 리포트 생성을 위해 다음 성적 레포트가 필요합니다: {', '.join(missing_list)}"
+                    )
+            aiTestContent=TestReport(hmt=userHmt, cst=userCst)
+
+            aiReport=AiReport(user=user,
+                              reportTermNum=default_term(),
+                              reportGradeNum=user.gradeNum,
+                              hmtID=userHmt,
+                              cstID=userCst)
+
+        except BusinessException:
+            raise
+        except Exception as e:
+            raise DatabaseException(
+                ErrorCode.DATABASE_ERROR,
+                f"AI 리포트 생성 중 오류가 발생했습니다: {str(e)}"
+            )
+
+
+
+
+AiReportService=AiReportService()

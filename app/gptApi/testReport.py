@@ -2,7 +2,7 @@ from gptApi.gptEngine import GptBase
 from domain.Hmt import Hmt
 from domain.Cst import Cst
 
-class testReport(GptBase):
+class TestReport(GptBase):
     def __new__(cls,hmt:Hmt,cst:Cst):
         return cls.get_response(hmt,cst)
     
@@ -146,7 +146,7 @@ class testReport(GptBase):
 
     @staticmethod
     def output_constructor() -> str:
-        """
+        return """
         다음과 같은 json 형태로 출력해줘
             {
                 cst_hmt_test_report: 1000자 내외 택스트 형태로 레포트 결과물
@@ -154,7 +154,6 @@ class testReport(GptBase):
                 field: 추천 계열 리스트
             }
         """
-        pass
     @staticmethod
     def user_prompt(hmt:Hmt,cst:Cst)->str:
         prompt=f"""
