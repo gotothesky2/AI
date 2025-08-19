@@ -2,6 +2,7 @@ from domain.entity import BaseEntity
 from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger,DECIMAL
 from sqlalchemy.orm import relationship
 from enum import Enum
+
 class CategoryName(Enum):
     KOREAN=0
     MATH=1
