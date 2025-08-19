@@ -13,14 +13,14 @@ class ReportScore(BaseEntity):
     }
 
     id=Column(BigInteger,name='rs_id',primary_key=True)
-    subject=Column(String(50),name='subject',nullable=False)
-    grade=Column(Integer,name='grade',nullable=True)
-    studentNum=Column(Integer,name='student_num',nullable=True)
-    _standardDeviation=Column(VARBINARY(50),name='standard_deviation',nullable=True)
-    subjectAverage=Column(Integer,name='subject_average',nullable=True)
-    achievement=Column(String,name='achievement',nullable=True)
-    score=Column(Integer,name='score',nullable=True)
-    credit=Column(Integer,name='credit',nullable=False)
+    subject=Column(String(50),name='subject',nullable=False)#세부 과목명
+    grade=Column(Integer,name='grade',nullable=True) #등급
+    studentNum=Column(Integer,name='student_num',nullable=True) #학생 수
+    _standardDeviation=Column(VARBINARY(50),name='standard_deviation',nullable=True) #표준편차
+    subjectAverage=Column(Integer,name='subject_average',nullable=True) #과목 평균
+    achievement=Column(String,name='achievement',nullable=True) #성취도
+    score=Column(Integer,name='score',nullable=True) #원점수
+    credit=Column(Integer,name='credit',nullable=False) #학점
 
     rId=Column(BigInteger,ForeignKey('report.r_id'),name='r_id',nullable=False)
 

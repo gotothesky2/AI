@@ -5,10 +5,11 @@
 
 from .HmtService import HmtService
 from .CstService import CstService
-from .ReportService import ReportService
+from .ExcelMappingService import excelMappingService
+
 
 __all__ = [
     "HmtService",
     "CstService",
-    "ReportService"
+    "excelMappingService",
 ]

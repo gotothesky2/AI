@@ -2,20 +2,21 @@ from gptApi.gptEngine import GptBase
 from domain.Hmt import Hmt
 from domain.Cst import Cst
 
+
 class TestReport(GptBase):
-    def __new__(cls,hmt:Hmt,cst:Cst):
-        return cls.get_response(hmt,cst)
-    
+    def __new__(cls):
+        return cls.get_response()
+
     @staticmethod
-    def system_prompt()->str:
-        prompt="""
-            학생 진학 추천 레포트 작성에는 직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천, 교과와 모의고사 성적 분석, 사용자가 등록한 관심 계열 학과 대학교를 직업적성검사 흥미검사 데이터 및 성적 추이 데이터 기반 종합 분석 이 3가지 파트가 있어.
+    def system_prompt() -> str:
+        prompt = """
+            학생 진학 추천 레포트 작성에는 직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천, 교과와 모의고사 성적 분석, 사용자가 등록한 관심 계열 학과 대학교를 직업적성검사 흥미검사 데이터 및 성적 추이 데이터 기반 분석, 종합 분석 이 4가지 파트가 있어.
             그중 너는 직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천 부분을 담당하는 ai이야.
             너가 담당한 부분을 3000자 내외로 작성해줘.
             아래 [직업흥미검사 - 6유형 공식 설명/대표직업/대표 대학계열·학과], [흥미유형(홀랜드유형)별 학습 습관/학습 방법], [직업적성검사 11개 영역별 공식 설명/대표 대학계열·학과] 에 대한 정보를 바탕으로 각 사용자의 검사 결과 점수들을 분석해줘.
             너가 작성한 부분은 고등학생이 직접 보는 레포트 파트이기 때문에 전문성을 가지고 학생이 이해할 수 있도록 작성해줘.
             사용자를 지칭할 때에는 학생이라고 해줘.
-            
+            어투는 너무 딱딱하진 않게 조금 부드럽게 해줘.
 
             【직업흥미검사 - 6유형 공식 설명/대표직업/대표 대학계열·학과】
 
@@ -149,39 +150,41 @@ class TestReport(GptBase):
         return """
         다음과 같은 json 형태로 출력해줘
             {
-                cst_hmt_test_report: 1000자 내외 택스트 형태로 레포트 결과물
+                content: 3000자 내외 택스트 형태로 레포트 결과물
                 major: 추천 학과 리스트
                 field: 추천 계열 리스트
             }
         """
+
     @staticmethod
-    def user_prompt(hmt:Hmt,cst:Cst)->str:
-        prompt=f"""
+    def user_prompt() -> str:
+        prompt = f"""
         직업 흥미검사 결과[
-            R유형[실재형] 점수:{hmt.rScore},
-            I유형[탐구형] 점수:{hmt.iScore},
-            A유형[예술형] 점수:{hmt.aScore},
-            S유형[사회형] 점수:{hmt.sScore},
-            E유형[기업형] 점수:{hmt.eScore},
-            C유형[관습형] 점수:{hmt.cScore},
+            R유형[실재형] 점수:48.9,
+            I유형[탐구형] 점수:62.1,
+            A유형[예술형] 점수:48.8,
+            S유형[사회형] 점수:19.1,
+            E유형[기업형] 점수:54.9,
+            C유형[관습형] 점수:25.1,
         ]
-       
-        
+
+
         직업 적성검사 결과[
-            신체·운동능력 점수:{cst.physicalScore},
-            손재능 점수:{cst.handScore},
-            공간지각력 점수:{cst.spaceScore},
-            음악능력 점수:{cst.musicScore},
-            창의력 점수:{cst.creativeScore},
-            언어능력 점수:{cst.langScore},
-            수리·논리력 점수:{cst.mathScore},
-            자기성찰능력 점수:{cst.selfScore},
-            대인관계능력 점수:{cst.relationScore},
-            자연친화력 점수:{cst.natureScore},
-            예술시각능력 점수:{cst.artScore}
-            
+            신체·운동능력 점수:0.3,
+            손재능 점수:27.8,
+            공간지각력 점수:95.9,
+            음악능력 점수:61.6,
+            창의력 점수:91.1,
+            언어능력 점수:47.3,
+            수리·논리력 점수:98.5,
+            자기성찰능력 점수:31.5,
+            대인관계능력 점수:7.6,
+            자연친화력 점수:79.8,
+            예술시각능력 점수:62.6
+
         ]
 
         """
         return prompt
-    
+test=TestReport()
+print(test)

@@ -8,11 +8,16 @@ from repository.hmtRepository import hmtRepository
 from repository.aiReportRepository import aiReportRepository
 from repository.reportRepository import reportRepository
 from DTO.AiRepotDto import AiReportResponse, AiReportListResponse, AiReportRequest
-from gptApi import TestReport
-from util.Transactional import Transactional
+from gptApi import *
+from util.Transactional import Transactional,TransactionalRead
 from domain.AiReport import AiReport
 from domain.User import User
 from DTO.AiRepotDto import AiReportResponse,AiReportListResponse
+from services.UserService import userService
+from enum import Enum
+
+
+
 from util.termGenerator import default_term
 from globals import (
     ErrorCode,
@@ -24,6 +29,13 @@ from globals import (
     DatabaseException
 )
 
+class AiReportTokenCost(Enum):
+    COST_OF_BEFOR_SECOND=30
+    COST_OF_BEFOR_THIRD=50
+    COST_OF_AFTER_THIRD=70
+
+
+
 class AiReportService:
     def __init__(self):
         self._cstRepository = cstRepository
@@ -33,6 +45,10 @@ class AiReportService:
         self._mockScoreRepository = mockScoreRepository
         self._aiReportRepository = aiReportRepository
         self._reportRepository = reportRepository
+        self._userService = userService
+
+
+
     @Transactional
     def getAiReportsByUser(self,user_id:str):
         try:
@@ -102,14 +118,39 @@ class AiReportService:
                         ErrorCode.AI_REPORT_NOT_VALID_GRADE_TERM,
                         f"AI 리포트 생성을 위해 다음 성적 레포트가 필요합니다: {', '.join(missing_list)}"
                     )
-            aiTestContent=TestReport(hmt=userHmt, cst=userCst)
 
+
+
+            cost=0
+
+            if len(required_reports)<=2:#test 레포트만
+                cost=AiReportTokenCost.COST_OF_BEFOR_SECOND
+            if len(required_reports)<4: #성적레포트까지
+                cost=AiReportTokenCost.COST_OF_BEFOR_THIRD
+            if len(required_reports)>=4:#관심 학교 학과 까지
+                cost=AiReportTokenCost.COST_OF_AFTER_THIRD
+
+            aiTestContent = TestReport(hmt=userHmt, cst=userCst)
+            aiGradeContent=None
+            aiMajorContent=None
+            aiTotalContent=None
+
+            if cost >= AiReportTokenCost.COST_OF_BEFOR_THIRD:
+                aiGradeContent=GptScoreReport(user)
+            if cost >= AiReportTokenCost.COST_OF_AFTER_THIRD:
+                pass
             aiReport=AiReport(user=user,
-                              reportTermNum=default_term(),
-                              reportGradeNum=user.gradeNum,
+                              reportTermNum=request.reportTermNum,
+                              reportGradeNum=request.reportGradeNum,
+                              testReport=aiTestContent,
+                              majorContent=aiMajorContent,
+                              scoreReport=aiGradeContent,
+                              totalReport=aiTotalContent,
                               hmtID=userHmt,
                               cstID=userCst)
-
+            self._userService.deductTokenForService(uid=user.uid,service_name="aiReport",token_cost=cost)
+            self._aiReportRepository.save(aiReport)
+            return AiReportResponse.model_validate(aiReport,from_attributes=True)
         except BusinessException:
             raise
         except Exception as e:

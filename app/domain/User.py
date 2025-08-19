@@ -17,11 +17,9 @@ class User(BaseEntity):
     
     # 자주 사용하는 컬럼들만 명시적으로 매핑 (DB명 != Python명)
     name = Column(String(40), name='name', nullable=True)
-    email = Column(String(50), name='email', nullable=True) 
-    phoneNumber = Column(String(20), name='phone_number', nullable=True)
+    email = Column(String(50), name='email', nullable=True)
     gradeNum = Column(Integer, name='grade_num', nullable=True)
-    highschool = Column(String(40), name='highschool', nullable=True)
-    sex = Column(String(50), name='sex', nullable=True)  # ENUM
+    sex = Column(String(50), name='sex', nullable=True)
     token = Column(Integer, name='token', nullable=False)
 
     
@@ -30,7 +28,7 @@ class User(BaseEntity):
     csts = relationship('Cst', back_populates='user')
     aiReports = relationship('AiReport', back_populates='user')
     auth=relationship('OAuth', back_populates='user')
-    mocks=relationship('Mock', back_populates='user')
-    reports = relationship('Report', back_populates='user')
+    mocks=relationship('Mock', back_populates='user') # 모의고사 데이터
+    reports = relationship('Report', back_populates='user')#교과 데이터
     def __repr__(self):
         return f"<User(uid='{self.uid}', name='{getattr(self, 'name', None)}')>"

@@ -17,3 +17,6 @@ class Major(BaseEntity):
 
 
     universitys = relationship("University", secondary='university_major', viewonly=True)
+    university_major = relationship('UniversityMajor', back_populates="major")
+    # Field와의 양방향 관계 추가
+    field = relationship('Field', back_populates='majors')

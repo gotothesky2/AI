@@ -19,12 +19,9 @@ class UserUpdateRequest(BaseModel):
     sex: Optional[str] = None
 
 class UserResponse(BaseModel):
-    uid: str
     name: Optional[str] = None
     email: Optional[str] = None
-    phone_number: Optional[str] = None
     grade_num: Optional[int] = None
-    highschool: Optional[str] = None
     sex: Optional[str] = None
     token: int
     created_at: Optional[datetime] = None
