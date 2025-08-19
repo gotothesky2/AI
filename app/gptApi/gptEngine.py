@@ -53,8 +53,8 @@ class GptBase(ABC):
                 {"role": "system", "content":cls.system_prompt()+cls.output_constructor()},
                 {"role": "user", "content": cls.user_prompt(*args, **kwargs)},
             ],
-            max_tokens=3000,
-            temperature=0.6,
+            max_tokens=5000,
+            temperature=0.8,
         )
 
 

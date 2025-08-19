@@ -59,7 +59,7 @@ class GptScoreReport(GptBase):
         return prompt
     @staticmethod
     def user_prompt(report:Report,mock:Mock) ->str:
-
+        for reportScores in report.reportScores:
         prompt=f"""
             
         

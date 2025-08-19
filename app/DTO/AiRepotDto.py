@@ -1,12 +1,11 @@
-from pydantic import BaseModel,ConfigDict, Field
+from pydantic import BaseModel,ConfigDict, Field, field_validator
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 class AiReportListResponse(BaseModel):
     id: int
     reportGradeNum: int
     reportTermNum: int
-    userName: Optional[str]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
@@ -24,6 +23,14 @@ class AiReportResponse(BaseModel):
     totalReport:Optional[str]=None
 
     model_config = ConfigDict(from_attributes=True)
+    
+    @field_validator('userName', mode='before')
+    @classmethod
+    def get_user_name(cls, v, info):
+        """AiReport 객체에서 user.name을 추출합니다."""
+        if hasattr(info.data, 'user') and info.data.user:
+            return getattr(info.data.user, 'name', None)
+        return v
 
 class AiReportRequest(BaseModel):
     reportGradeNum: int=Field(description='레포트 생성할 학년(반영 성적 및 추천 내용 달라짐)')
