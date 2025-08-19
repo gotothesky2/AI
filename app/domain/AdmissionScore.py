@@ -13,9 +13,9 @@ class AdmissionScore(BaseEntity):
     id = Column(BigInteger, name='score_id', primary_key=True, autoincrement=True)
     
     # univ_major와 1대1 연결 (복합 외래키)
-
     univId = Column(BigInteger, name='univ_id', nullable=False)
     majorId = Column(BigInteger, name='major_id', nullable=False)
+
     # 성적 데이터 컬럼들
     admissionType = Column(String(100), name='admission_type', nullable=False)  # 교과성적우수자전형
     cutFifty = Column(Float, name='cut_fifty', nullable=True)
