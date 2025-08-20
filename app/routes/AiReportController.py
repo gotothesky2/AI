@@ -14,7 +14,7 @@ from globals import (
 )
 from globals import create_success_response
 
-router =APIRouter(prefix='aireport')
+router =APIRouter(prefix='/aireport')
 
 @router.post("/me",summary="현재 유저의 모든 aiReport를 가져옵니다.")
 async def getAiReportsByMe(current_user:User = Depends(get_current_user)):
@@ -57,7 +57,7 @@ async def delete_aiReport(report_id:int):
     except Exception as e:
         raise_business_exception(ErrorCode.UNKNOWN_ERROR,f"AiReport 삭제 Api 예창치 못한 오류 {str(e)}")
 
-@router.create("",summary="AiReport생성 Api",request_schema=AiReportRequest)
+@router.post("",summary="AiReport생성 Api")
 async def create_aiReport(request:AiReportRequest,current_user:User = Depends(get_current_user)):
     try:
         result=aiReportService.createAiReport(request,current_user.uid)
