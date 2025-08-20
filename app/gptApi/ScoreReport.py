@@ -204,12 +204,13 @@ class GradeAnalyzer:
     def _get_category_name(self, category_enum) -> str:
         """카테고리 enum을 한글명으로 변환"""
         category_names = {
-            0: "국어",
-            1: "수학",
-            2: "영어",
-            3: "한국사",
-            4: "사회",
-            5: "과학"
+            1: "국어",
+            2: "수학",
+            3: "영어",
+            4: "한국사",
+            5: "탐구1",
+            6: "탐구2",
+            7: "제2외국어"
         }
         return category_names.get(category_enum, f"카테고리{category_enum}")
 
@@ -275,5 +276,24 @@ class GradeAnalyzer:
             avg_score = sum(scores) / len(scores)
             summary.append(f"• 내신성적 평균 원점수: {avg_score:.1f}점")
 
+        # 평균등급 계산 (과목별 시수 × 등급) / 전체 시수
+        total_credit_hours = 0
+        weighted_grade_sum = 0
+        
+        for report in self.reports:
+            for report_score in report.reportScores:
+                if report_score.credit and report_score.grade:
+                    # 등급을 숫자로 변환 (1등급=1, 2등급=2, ...)
+                    grade_value = int(report_score.grade)
+                    credit_hours = float(report_score.credit)
+                    
+                    total_credit_hours += credit_hours
+                    weighted_grade_sum += (credit_hours * grade_value)
+        
+        if total_credit_hours > 0:
+            avg_grade = weighted_grade_sum / total_credit_hours
+            summary.append(f"• 내신성적 평균등급: {avg_grade:.2f}")
+
         return summary
+    
 

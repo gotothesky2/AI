@@ -50,7 +50,7 @@ class AiReportService:
 
 
     @Transactional
-    def getAiReportsByUser(self,user_id:str):
+    def getAllAiReportsByUser(self,user_id:str):
         try:
             user:User=self._userRepository.getUserById(user_id)
             if user is None:
@@ -59,7 +59,6 @@ class AiReportService:
             result=[]
             for aiReport in userAiReports:
                 reportDto=AiReportListResponse.model_validate(aiReport,from_attributes=True)
-                reportDto.userName=user.name
                 result.append(reportDto)
             return result
         except Exception as e:
@@ -119,8 +118,6 @@ class AiReportService:
                         f"AI 리포트 생성을 위해 다음 성적 레포트가 필요합니다: {', '.join(missing_list)}"
                     )
 
-
-
             cost=0
 
             if len(required_reports)<=2:#test 레포트만
@@ -131,14 +128,16 @@ class AiReportService:
                 cost=AiReportTokenCost.COST_OF_AFTER_THIRD
 
             aiTestContent = TestReport(hmt=userHmt, cst=userCst)
-            aiGradeContent=None
-            aiMajorContent=None
-            aiTotalContent=None
+            aiGradeContent="None"
+            aiTotalContent="None"
 
             if cost >= AiReportTokenCost.COST_OF_BEFOR_THIRD:
                 aiGradeContent=GptScoreReport(user)
-            if cost >= AiReportTokenCost.COST_OF_AFTER_THIRD:
-                pass
+            if cost>=AiReportTokenCost.COST_OF_AFTER_THIRD:
+                aiTotalContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
+            else:
+                aiTestContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
+
             aiReport=AiReport(user=user,
                               reportTermNum=request.reportTermNum,
                               reportGradeNum=request.reportGradeNum,
@@ -158,8 +157,16 @@ class AiReportService:
                 ErrorCode.DATABASE_ERROR,
                 f"AI 리포트 생성 중 오류가 발생했습니다: {str(e)}"
             )
+    @Transactional
+    def deleteAiReport(self,report_id:int):
+        report=self._aiReportRepository.get(report_id)
+        if report is None:
+            raise BusinessException(ErrorCode.AI_REPORT_NOT_FOUND,"ai report is not found")
+        self._aiReportRepository.delete(report_id)
 
 
 
 
-AiReportService=AiReportService()
+
+
+aiReportService=AiReportService()
