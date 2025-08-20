@@ -1,7 +1,7 @@
 import jwt
 import os
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from repository.userRepository import userRepository

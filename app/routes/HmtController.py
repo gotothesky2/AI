@@ -82,6 +82,7 @@ async def get_my_hmts(current_user: User = Depends(get_current_user)):
             f"내 흥미검사 목록 API 예상치 못한 오류 - {str(e)}"
         )
 
+
 @router.get("/{hmt_id}", summary="흥미검사 조회")
 async def get_hmt(hmt_id: int):
     """

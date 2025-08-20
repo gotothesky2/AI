@@ -11,12 +11,12 @@ class Mock(Base):
     }
     id=Column(BigInteger,name='mock_id',primary_key=True)
     uid=Column(String(36),ForeignKey('user.uid'),name='uid',nullable=False)
-    examYear=Column(Integer,name="exam_year",nullable=False)
-    examMonth=Column(Integer,name="exam_month",nullable=False)
-    examGrade=Column(Integer,name="exam_grade",nullable=False)
-    createAt=Column(DateTime,name="create_at",nullable=False)
-    updateAt=Column(DateTime,name="update_at",nullable=False)
+    examYear=Column(Integer,name="exam_year",nullable=False)#응시년도
+    examMonth=Column(Integer,name="exam_month",nullable=False)#응시월
+    examGrade=Column(Integer,name="exam_grade",nullable=False)#응시학년
+    createAt=Column(DateTime,name="create_at",nullable=False)#생성일
+    updateAt=Column(DateTime,name="update_at",nullable=False)#수정일
 
     user=relationship("User",back_populates="mocks")
-    mockScores=relationship("MockScore",back_populates="mock")
+    mockScores=relationship("MockScore",back_populates="mock") #과목별 모의고사 점수
 

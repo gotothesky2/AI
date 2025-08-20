@@ -80,4 +80,82 @@ class UserService:
         self._userRepository.save(user)
         return user
 
+    @Transactional
+    def addToken(self, uid: str, token_amount: int):
+        """사용자에게 토큰을 추가합니다."""
+        user = self.getUserById(uid)
+        user.token += token_amount
+        user.updatedAt = datetime.now()
+        return user
+
+    @Transactional
+    def useToken(self, uid: str, token_amount: int):
+        """사용자의 토큰을 차감합니다. 토큰이 부족하면 예외를 발생시킵니다."""
+        user = self.getUserById(uid)
+        
+        if user.token < token_amount:
+            raise Exception(f"Insufficient tokens. Required: {token_amount}, Available: {user.token}")
+        
+        user.token -= token_amount
+        user.updatedAt = datetime.now()
+        return user
+
+    @Transactional
+    def checkTokenBalance(self, uid: str):
+        """사용자의 토큰 잔액을 확인합니다."""
+        user = self.getUserById(uid)
+        return user.token
+
+    @Transactional
+    def hasEnoughTokens(self, uid: str, required_tokens: int):
+        """사용자가 필요한 토큰을 가지고 있는지 확인합니다."""
+        user = self.getUserById(uid)
+        return user.token >= required_tokens
+
+    @Transactional
+    def deductTokenForService(self, uid: str, service_name: str, token_cost: int):
+        """특정 서비스 사용을 위해 토큰을 차감합니다."""
+        user = self.getUserById(uid)
+        
+        if user.token < token_cost:
+            raise Exception(f"Insufficient tokens for {service_name}. Required: {token_cost}, Available: {user.token}")
+        
+        user.token -= token_cost
+        user.updatedAt = datetime.now()
+        
+        # 토큰 사용 로그를 반환할 수 있습니다 (실제 구현에서는 별도 테이블에 저장)
+        return {
+            'user_id': uid,
+            'service_name': service_name,
+            'token_cost': token_cost,
+            'remaining_tokens': user.token,
+            'used_at': datetime.now()
+        }
+
+    @Transactional
+    def refundToken(self, uid: str, token_amount: int, reason: str = "환불"):
+        """사용자에게 토큰을 환불합니다."""
+        user = self.getUserById(uid)
+        user.token += token_amount
+        user.updatedAt = datetime.now()
+        
+        return {
+            'user_id': uid,
+            'refund_amount': token_amount,
+            'reason': reason,
+            'total_tokens': user.token,
+            'refunded_at': datetime.now()
+        }
+
+    @Transactional
+    def getTokenUsageStats(self, uid: str):
+        """사용자의 토큰 사용 통계를 반환합니다."""
+        user = self.getUserById(uid)
+        return {
+            'user_id': uid,
+            'current_tokens': user.token,
+            'created_at': user.createdAt,
+            'last_updated': user.updatedAt
+        }
+
 userService = UserService(userRepository) 

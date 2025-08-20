@@ -4,7 +4,7 @@
 (예외 처리는 global 패키지로 이동)
 """
 from . import globalDB
-from .Transactional import Transactional
+from .Transactional import Transactional,TransactionalRead,TransactionalWrite
 from .termGenerator import default_term
 
 __all__ = [
