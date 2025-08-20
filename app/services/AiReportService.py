@@ -52,7 +52,7 @@ class AiReportService:
     @Transactional
     def getAllAiReportsByUser(self,user_id:str):
         try:
-            user:User=self._userRepository.getUserById(user_id)
+            user:User=self._userRepository.getById(user_id)
             if user is None:
                 raise BusinessException(ErrorCode.USER_NOT_FOUND,f"User  not found")
             userAiReports=user.aiReports
@@ -81,7 +81,8 @@ class AiReportService:
         try:
             if (not 0<request.reportGradeNum<=3) or (not 0<request.reportTermNum<=2):
                 raise BusinessException(ErrorCode.AI_REPORT_NOT_VALID_GRADE_TERM,f"부적절한 학년 학기입니다. 요청하실 학년 학기를 다시 입력해 주세요")
-            user=self._userRepository.getUserById(user_id)
+            user:User=self._userRepository.getById(user_id)
+
             if user is None:
                 raise BusinessException(ErrorCode.USER_NOT_FOUND,f"User not found")
             userHmt=self._hmtRepository.getUserHmtById(user_id)

@@ -12,7 +12,7 @@ class AiReport(BaseEntity):
     scoreReport = Column(Text,name='score_report', nullable=True)
     majorReport = Column(Text,name='major_report', nullable=True)
     totalReport = Column(Text,name='total_report', nullable=True)
-    reportGradeNum=Column(Integer,name='report_grade_num', nullable=False, default=default_term)
+    reportGradeNum=Column(Integer,name='report_grade_num', nullable=False)
     reportTermNum=Column(Integer,name='report_term_num', nullable=False, default=default_term)
     HmtID=Column(BigInteger,name='hmt_id', nullable=False)
     CstID=Column(BigInteger,name='cst_id', nullable=False)
