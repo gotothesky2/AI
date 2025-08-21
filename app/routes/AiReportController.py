@@ -16,7 +16,7 @@ from globals import create_success_response
 
 router =APIRouter(prefix='/aireport')
 
-@router.post("/me",summary="현재 유저의 모든 aiReport를 가져옵니다.")
+@router.get("/me",summary="현재 유저의 모든 aiReport를 가져옵니다.")
 async def getAiReportsByMe(current_user:User = Depends(get_current_user)):
     try:
         result_list:List[AiReportListResponse]= aiReportService.getAllAiReportsByUser(current_user.uid)
