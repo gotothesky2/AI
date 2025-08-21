@@ -1,0 +1,20 @@
+[Unit]
+Description=AI API Gunicorn Service
+After=network.target
+
+[Service]
+Type=notify
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/AI
+Environment="PATH=/home/ubuntu/AI/venv/bin"
+ExecStart=/home/ubuntu/AI/venv/bin/gunicorn -c gunicorn.conf.py run:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

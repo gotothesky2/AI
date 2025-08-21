@@ -16,7 +16,7 @@ class AiReportResponse(BaseModel):
     userName:Optional[str]=None
     created_at:datetime
     CstID:int
-    HmtID:Optional[int]=None
+    HmtID:int
     testReport:Optional[str]=None
     scoreReport:Optional[str]=None
     majorReport:Optional[str]=None
