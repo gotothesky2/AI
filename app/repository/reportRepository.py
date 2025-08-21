@@ -1,5 +1,5 @@
 from repository import Repository, BaseRepository
-from domain.report import Report
+from domain.reportModule import Report
 
 class ReportRepository(BaseRepository[Report]):
     def __init__(self):

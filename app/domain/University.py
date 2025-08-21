@@ -17,4 +17,5 @@ class University(BaseEntity):
     majors = relationship("Major",secondary='university_major',viewonly=True)
     university_major=relationship('UniversityMajor', back_populates="university")
 
+    majorBookmarks = relationship("MajorBookmark", back_populates="university")
 

@@ -1,8 +1,11 @@
 from gptApi.gptEngine import GptBase
 from domain.User import User
+from util.GradeComparisonUtil import GradeComparisonUtil
+from typing import Dict, List, Any
+from sqlalchemy.orm import Session
 class AiTotalReport(GptBase):
-    def __new__(cls,testReport:str,scoreReport:str,user:User,bookmark:bool):
-        return cls.get_response(testReport,scoreReport, user)
+    def __new__(cls, testReport:str, scoreReport:str, user:User, bookmark:bool):
+        return cls.get_response(testReport, scoreReport, user, bookmark)
 
     @staticmethod
     def system_prompt() ->str:
@@ -91,6 +94,7 @@ class AiTotalReport(GptBase):
     @staticmethod
     def output_constructor() ->str:
         prompt = """
+        다음과 같은 json으로 출력해줘
             {
                 content: 출력결과
             }
@@ -99,12 +103,108 @@ class AiTotalReport(GptBase):
 
 
     @staticmethod
-    def user_prompt(testReport:str, scoreReport:str, user:User) ->str:
+    def user_prompt(testReport:str, scoreReport:str, user:User, bookmark:bool = False) ->str:
         prompt = f"""
             [직업 흥미검사 직업 적성검사를 종합 분석 및 분석기반 계열과 학과 추천]
             {testReport}
             [교과와 모의고사 성적 분석]
             {scoreReport}
-            []
+            [사용자가 등록한 관심 계열 학과 대학교의 교과 합격 등급 컷]
+            {AiTotalReport._generate_bookmark_analysis(user, bookmark)}
         """
         return prompt
+    
+    @staticmethod
+    def _generate_bookmark_analysis(user: User, bookmark: bool) -> str:
+        """
+        북마크 정보와 합격 등급컷을 분석하여 프롬프트에 포함할 텍스트를 생성합니다.
+        
+        Args:
+            user: User 객체
+            bookmark: 북마크 존재 여부
+            
+        Returns:
+            str: 북마크 분석 결과 텍스트
+        """
+        if not bookmark or not user.majorBookmarks:
+            return "등록된 관심 학과-학교가 없습니다."
+        
+        try:
+            # 전역 데이터베이스 사용
+            grade_util = GradeComparisonUtil()
+            
+            # 유저의 교과 평균등급 계산
+            overall_grade = grade_util.calculate_user_overall_average_grade(user)
+            
+            # 북마크 정보 가공
+            bookmarks = grade_util.get_user_major_bookmarks_info(user)
+            
+            if not bookmarks:
+                return "등록된 관심 학과-학교가 없습니다."
+            
+            # 전역 DB에서 합격 등급컷 비교 실행
+            comparison_results = []
+            try:
+                comparison_results = grade_util.compare_user_grade_with_cutoffs(user)
+            except Exception as e:
+                print(f"등급 비교 실행 중 오류: {e}")
+                comparison_results = []
+            
+            # 분석 결과 텍스트 생성
+            analysis_text = f"""
+            === 관심 학과-학교 분석 결과 ===
+            
+            [유저 정보]
+            - 전체 교과 평균등급: {overall_grade}등급
+            - 총 관심 학과-학교: {len(bookmarks)}개
+            
+            [북마크 목록]
+            """
+            
+            for i, bookmark_info in enumerate(bookmarks, 1):
+                analysis_text += f"""
+            {i}. {bookmark_info['major_name']}
+                - 대학교: {bookmark_info['university_name'] or '학과만 북마크'}
+                """
+                
+                # 합격 등급컷 비교 결과가 있는 경우 추가
+                if comparison_results and i <= len(comparison_results):
+                    result = comparison_results[i-1]
+                    if result.get('admission_type'):
+                        analysis_text += f"""
+                - 전형: {result['admission_type']}
+                - 90% 합격 등급컷: {result['cutoff_90']}등급
+                - 진학 방향: {result['admission_direction']}
+                - 상태: {result['status']}
+                - 등급 차이: {result['grade_difference']}등급
+                """
+                    else:
+                        analysis_text += """
+                - 학교 정보가 없어 합격 등급컷을 비교할 수 없습니다.
+                """
+                else:
+                    analysis_text += """
+                - 합격 등급컷 정보가 없습니다.
+                """
+            
+            # 진학 방향별 요약
+            if comparison_results:
+                down_count = sum(1 for result in comparison_results 
+                               if result.get('admission_direction') == '하향')
+                appropriate_count = sum(1 for result in comparison_results 
+                                      if result.get('admission_direction') == '적정')
+                up_count = sum(1 for result in comparison_results 
+                              if result.get('admission_direction') == '상향')
+                
+                analysis_text += f"""
+            
+            [진학 방향 요약]
+            - 하향 지원 가능: {down_count}개 (안정적인 합격)
+            - 적정 지원 가능: {appropriate_count}개 (적절한 도전)
+            - 상향 지원 필요: {up_count}개 (성적 향상 필요)
+            """
+            
+            return analysis_text
+            
+        except Exception as e:
+            return f"북마크 분석 중 오류가 발생했습니다: {str(e)}"
