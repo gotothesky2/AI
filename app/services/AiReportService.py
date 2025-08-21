@@ -67,7 +67,7 @@ class AiReportService:
     @Transactional
     def getAireportByID(self,aiReportId:int):
         try:
-            report=self._aiReportRepository.getAiReportById(aiReportId)
+            report=self._aiReportRepository.getById(aiReportId)
             if report is None:
                 raise BusinessException(ErrorCode.AI_REPORT_NOT_FOUND,f"AI Report with Id not found")
             reportResult=AiReportResponse.model_validate(report,from_attributes=True)

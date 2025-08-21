@@ -38,6 +38,9 @@ class AiReportResponse(BaseModel):
     def parse_test_report(cls, v, info):
         """testReport 문자열을 JSON으로 파싱합니다."""
         if isinstance(v, str):
+            # 'None' 문자열이나 빈 문자열은 None으로 처리
+            if v.lower() in ['none', 'null', ''] or v.strip() == '':
+                return None
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
@@ -49,6 +52,9 @@ class AiReportResponse(BaseModel):
     def parse_score_report(cls, v, info):
         """scoreReport 문자열을 JSON으로 파싱합니다."""
         if isinstance(v, str):
+            # 'None' 문자열이나 빈 문자열은 None으로 처리
+            if v.lower() in ['none', 'null', ''] or v.strip() == '':
+                return None
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
@@ -60,6 +66,9 @@ class AiReportResponse(BaseModel):
     def parse_major_report(cls, v, info):
         """majorReport 문자열을 JSON으로 파싱합니다."""
         if isinstance(v, str):
+            # 'None' 문자열이나 빈 문자열은 None으로 처리
+            if v.lower() in ['none', 'null', ''] or v.strip() == '':
+                return None
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
@@ -71,6 +80,9 @@ class AiReportResponse(BaseModel):
     def parse_total_report(cls, v, info):
         """totalReport 문자열을 JSON으로 파싱합니다."""
         if isinstance(v, str):
+            # 'None' 문자열이나 빈 문자열은 None으로 처리
+            if v.lower() in ['none', 'null', ''] or v.strip() == '':
+                return None
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
