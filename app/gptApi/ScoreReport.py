@@ -1,6 +1,6 @@
 from gptApi.gptEngine import GptBase
-from domain.mock import *
-from domain.report import *
+from domain.mockModule import *
+from domain.reportModule import *
 from domain.User import User
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy.dialects.mysql import DECIMAL
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, BigInteger,VARBINARY
-from domain.entity import BaseEntity
+from ..entity import BaseEntity
 from decimal import Decimal
 
 class ReportScore(BaseEntity):
@@ -16,7 +16,7 @@ class ReportScore(BaseEntity):
     subject=Column(String(50),name='subject',nullable=False)#세부 과목명
     grade=Column(Integer,name='grade',nullable=True) #등급
     studentNum=Column(Integer,name='student_num',nullable=True) #학생 수
-    _standardDeviation=Column(VARBINARY(50),name='standard_deviation',nullable=True) #표준편차
+    standardDeviation=Column(VARBINARY(50),name='standard_deviation',nullable=True) #표준편차
     subjectAverage=Column(Integer,name='subject_average',nullable=True) #과목 평균
     achievement=Column(String,name='achievement',nullable=True) #성취도
     score=Column(Integer,name='score',nullable=True) #원점수
@@ -27,7 +27,7 @@ class ReportScore(BaseEntity):
     report=relationship("Report", back_populates="reportScores")
 
     def getStandardDeviation(self) -> Decimal:
-        return Decimal(self._standardDeviation.decode('utf-8'))
+        return Decimal(self.standardDeviation.decode('utf-8')) if self.standardDeviation else None
 
     def setStandardDeviation(self,value):
-        self._standardDeviation=str(round(float(value),1)).encode('utf-8') if value else None
+        self.standardDeviation=str(round(float(value),1)).encode('utf-8') if value else None

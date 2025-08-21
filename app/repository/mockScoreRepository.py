@@ -1,4 +1,4 @@
-from domain.mock.MockScore import MockScore
+from domain.mockModule.MockScore import MockScore
 from .Repository import BaseRepository
 from typing import List
 

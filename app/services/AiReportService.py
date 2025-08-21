@@ -85,24 +85,23 @@ class AiReportService:
 
             if user is None:
                 raise BusinessException(ErrorCode.USER_NOT_FOUND,f"User not found")
-            userHmt=self._hmtRepository.getUserHmtById(user_id)
+            userHmt=self._hmtRepository.getLatestByUserId(user.uid)
             if userHmt is None:
                 raise BusinessException(ErrorCode.HMT_NOT_FOUND,f"직업 흥미검사를 실시해주세요.")
-            userCst=self._cstRepository.getUserCstById(user_id)
+            userCst=self._cstRepository.getLatestByUserId(user.uid)
             if userCst is None:
                 raise BusinessException(ErrorCode.CST_NOT_FOUND,f"직업 적성검사를 실시해 주세요.")
+            # 필요한 모든 학년-학기 조합 확인
+            required_reports = set()
+            required_reports.add((request.reportGradeNum,1))
+            required_reports.add((request.reportGradeNum, request.reportTermNum))
+            
             if request.reportGradeNum > 1:
                 reports = self._reportRepository.getSortReportByUid(user_id)
                 
-                # 필요한 모든 학년-학기 조합 확인
-                required_reports = set()
                 for grade in range(1, request.reportGradeNum):
                     for term in range(1, 3):
                         required_reports.add((grade, term))
-
-                required_reports.add((request.reportGradeNum,1))
-                required_reports.add((request.reportGradeNum, request.reportTermNum))
-
                 
                 # 실제 존재하는 레포트 확인
                 existing_reports = set()
@@ -128,13 +127,17 @@ class AiReportService:
             if len(required_reports)>=4:#관심 학교 학과 까지
                 cost=AiReportTokenCost.COST_OF_AFTER_THIRD
 
+
+            if cost.value>user.token:
+                raise BusinessException(ErrorCode.AI_PROCESSING_ERROR,"토큰이 충분하지 않습니다.")
             aiTestContent = TestReport(hmt=userHmt, cst=userCst)
             aiGradeContent="None"
             aiTotalContent="None"
+            aiMajorContent="None"
 
-            if cost >= AiReportTokenCost.COST_OF_BEFOR_THIRD:
+            if cost.value >= AiReportTokenCost.COST_OF_BEFOR_THIRD.value:
                 aiGradeContent=GptScoreReport(user)
-            if cost>=AiReportTokenCost.COST_OF_AFTER_THIRD:
+            if cost.value >= AiReportTokenCost.COST_OF_AFTER_THIRD.value:
                 aiTotalContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
             else:
                 aiTestContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
@@ -143,12 +146,12 @@ class AiReportService:
                               reportTermNum=request.reportTermNum,
                               reportGradeNum=request.reportGradeNum,
                               testReport=aiTestContent,
-                              majorContent=aiMajorContent,
+                              majorReport=aiMajorContent,
                               scoreReport=aiGradeContent,
                               totalReport=aiTotalContent,
-                              hmtID=userHmt,
-                              cstID=userCst)
-            self._userService.deductTokenForService(uid=user.uid,service_name="aiReport",token_cost=cost)
+                              HmtID=userHmt.id,
+                              CstID=userCst.id)
+            self._userService.deductTokenForService(uid=user.uid,service_name="aiReport",token_cost=cost.value)
             self._aiReportRepository.save(aiReport)
             return AiReportResponse.model_validate(aiReport,from_attributes=True)
         except BusinessException:
@@ -162,7 +165,7 @@ class AiReportService:
     def deleteAiReport(self,report_id:int):
         report=self._aiReportRepository.get(report_id)
         if report is None:
-            raise BusinessException(ErrorCode.AI_REPORT_NOT_FOUND,"ai report is not found")
+            raise BusinessException(ErrorCode.AI_REPORT_NOT_FOUND,"ai reportModule is not found")
         self._aiReportRepository.delete(report_id)
 
 

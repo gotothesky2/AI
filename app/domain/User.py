@@ -1,7 +1,7 @@
 # app/domain/user.py
 from sqlalchemy import Column, String, Integer, DateTime, Enum
 from sqlalchemy.orm import relationship
-from .entity.BaseEntity import BaseEntity
+from domain.entity.BaseEntity import BaseEntity
 
 class User(BaseEntity):
     __tablename__ = 'user'
@@ -30,5 +30,6 @@ class User(BaseEntity):
     auth=relationship('OAuth', back_populates='user')
     mocks=relationship('Mock', back_populates='user') # 모의고사 데이터
     reports = relationship('Report', back_populates='user')#교과 데이터
+    majorBookmarks=relationship('MajorBookmark', back_populates='user')
     def __repr__(self):
         return f"<User(uid='{self.uid}', name='{getattr(self, 'name', None)}')>"

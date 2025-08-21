@@ -1,4 +1,4 @@
-from domain.report.ReportScore import ReportScore
+from domain.reportModule.ReportScore import ReportScore
 from .Repository import BaseRepository
 from typing import List
 
