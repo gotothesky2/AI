@@ -149,7 +149,7 @@ class TestReport(GptBase):
         return """
         다음과 같은 json 형태로 출력해줘
             {
-                cst_hmt_test_report: 3000자 내외 택스트 형태로 레포트 결과물
+                content: 3000자 내외 택스트 형태로 레포트 결과물
                 major: 추천 학과 리스트
                 field: 추천 계열 리스트
                 hmt: 흥미 유형 상위 2개 영역 리스트 (예시: ["1순위 R유형","2순위 S유형"])
