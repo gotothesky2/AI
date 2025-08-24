@@ -18,4 +18,4 @@ class Report(BaseEntity):
     userGrade=Column(Integer,name='user_grade',nullable=False)#유저 학년
 
     user=relationship("User",back_populates="reports")
-    reportScores=relationship("ReportScore",back_populates="report")
+    reportScores=relationship("ReportScore", back_populates="report")
