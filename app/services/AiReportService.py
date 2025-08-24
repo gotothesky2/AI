@@ -118,14 +118,14 @@ class AiReportService:
                         f"AI 리포트 생성을 위해 다음 성적 레포트가 필요합니다: {', '.join(missing_list)}"
                     )
 
-            cost=0
-
-            if len(required_reports)<=2:#test 레포트만
-                cost=AiReportTokenCost.COST_OF_BEFOR_SECOND
-            if len(required_reports)<4: #성적레포트까지
-                cost=AiReportTokenCost.COST_OF_BEFOR_THIRD
-            if len(required_reports)>=4:#관심 학교 학과 까지
-                cost=AiReportTokenCost.COST_OF_AFTER_THIRD
+            # 요청된 학년-학기 조합 수에 따라 비용을 정확히 산정
+            # <=2: 테스트 리포트만, <4: 성적 리포트 포함, >=4: 관심 학교/학과 포함
+            if len(required_reports) <= 2:  # test 레포트만
+                cost = AiReportTokenCost.COST_OF_BEFOR_SECOND
+            elif len(required_reports) < 4:  # 성적레포트까지
+                cost = AiReportTokenCost.COST_OF_BEFOR_THIRD
+            else:  # 관심 학교 학과 까지
+                cost = AiReportTokenCost.COST_OF_AFTER_THIRD
 
 
             if cost.value>user.token:
@@ -140,7 +140,7 @@ class AiReportService:
             if cost.value >= AiReportTokenCost.COST_OF_AFTER_THIRD.value:
                 aiTotalContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
             else:
-                aiTestContent=AiTotalReport(aiTestContent,aiGradeContent,user,True)
+                aiTotalContent=AiTotalReport(aiTestContent,aiGradeContent,user,False)
 
             aiReport=AiReport(user=user,
                               reportTermNum=request.reportTermNum,

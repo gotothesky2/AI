@@ -3,7 +3,7 @@ from .entity.BaseEntity import BaseEntity
 from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 
 class MajorBookmark(BaseEntity):
-    __tablename__ = "mahor_bookmark"
+    __tablename__ = "major_bookmark"
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8mb4",
