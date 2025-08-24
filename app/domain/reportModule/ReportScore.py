@@ -22,7 +22,7 @@ class ReportScore(BaseEntity):
     score=Column(Integer,name='score',nullable=True) #원점수
     credit=Column(Integer,name='credit',nullable=False) #학점
 
-    rId=Column(BigInteger,ForeignKey('report.r_id'),name='r_id',nullable=False)
+    rId=Column(BigInteger, ForeignKey('report.r_id'), name='r_id', nullable=False)
 
     report=relationship("Report", back_populates="reportScores")
 

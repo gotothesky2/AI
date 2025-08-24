@@ -4,6 +4,7 @@ from routes.HmtController import router as hmt_router
 from routes.CstController import router as cst_router
 from routes.AuthController import router as auth_router
 from routes.AiReportController import router as ai_report_router
+from routes.AdmissionPossibilityController import router as admission_possibility_router
 from globals import setup_exception_handlers
 from util.globalDB.db_context import set_db, reset_db
 from db import SessionLocal,engine
@@ -74,6 +75,7 @@ app.include_router(hmt_router, tags=["흥미검사"])
 app.include_router(cst_router, tags=["직업적성검사"])
 
 app.include_router(ai_report_router,tags=["ai레포트"])
+app.include_router(admission_possibility_router, tags=["합격가능성"])
 
 @app.get("/")
 async def root():
