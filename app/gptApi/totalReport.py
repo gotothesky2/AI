@@ -96,7 +96,7 @@ class AiTotalReport(GptBase):
         prompt = """
         다음과 같은 json으로 출력해줘
             {
-                content: 출력결과
+                content: 출력결과 4000자내외
             }
         """
         return prompt
