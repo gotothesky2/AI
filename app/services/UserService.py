@@ -86,6 +86,7 @@ class UserService:
         user = self.getUserById(uid)
         user.token += token_amount
         user.updatedAt = datetime.now()
+        self._userRepository.save(user)
         return user
 
     @Transactional
@@ -98,6 +99,7 @@ class UserService:
         
         user.token -= token_amount
         user.updatedAt = datetime.now()
+        self._userRepository.save(user)
         return user
 
     @Transactional
@@ -122,6 +124,7 @@ class UserService:
         
         user.token -= token_cost
         user.updatedAt = datetime.now()
+        self._userRepository.save(user)
         
         # 토큰 사용 로그를 반환할 수 있습니다 (실제 구현에서는 별도 테이블에 저장)
         return {
@@ -138,6 +141,7 @@ class UserService:
         user = self.getUserById(uid)
         user.token += token_amount
         user.updatedAt = datetime.now()
+        self._userRepository.save(user)
         
         return {
             'user_id': uid,
