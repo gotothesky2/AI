@@ -94,11 +94,12 @@ async def test_error():
     raise_file_exception(ErrorCode.PDF_PROCESSING_ERROR, "테스트 에러 메시지입니다.")
 
 if __name__ == "__main__":
-
     uvicorn.run(
         "run:app",  # app 폴더 안에서 실행될 때의 경로
         host="0.0.0.0",
         port=8081,
         reload=True,
+        ssl_keyfile="../127.0.0.1+1-key.pem",  # 개인키 파일 경로
+        ssl_certfile="../127.0.0.1.pem",        # 인증서 파일 경로
         log_level="debug"  # 더 자세한 로그
     )
